@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { Resend } from "resend";
 import crypto from "crypto";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY || "re_dummy_key_buat_build_doang");
 
 export async function POST(req: Request) {
   try {

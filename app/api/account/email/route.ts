@@ -7,7 +7,7 @@ import crypto from 'crypto';
 import { Resend } from 'resend';
 
 // Mengambil API Key dari .env yang baru saja Anda buat
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY || "re_dummy_key_buat_build_doang");
 
 export async function PATCH(req: Request) {
   try {
