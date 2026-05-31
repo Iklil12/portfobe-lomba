@@ -11,6 +11,7 @@ import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { EditableText } from '@/components/ui/EditableText';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -88,8 +89,8 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
     };
 
     const nameParts = fullName.split(' ');
-    const firstName = nameParts[0];
-    const lastName = nameParts.slice(1).join(' ');
+    const firstName = data?.profile?.firstName || data?.firstName || nameParts[0];
+    const lastName = data?.profile?.lastName || data?.lastName || nameParts.slice(1).join(' ');
 
     // --- FUNGSI SLIDER KIRI & KANAN ---
     const scrollLeft = () => {
@@ -181,15 +182,15 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
                 >
                     <motion.div variants={fadeUp} className={`flex justify-between items-start mt-12`}>
                         <div className="flex flex-col gap-1">
-                            <span className="font-sans text-[9px] @md:text-xs font-bold uppercase tracking-[0.2em] text-[var(--hl)]">Based in {location}</span>
+                            <span className="font-sans text-[9px] @md:text-xs font-bold uppercase tracking-[0.2em] text-[var(--hl)]"><EditableText value={location} field="location" entity="profile" isEditor={isEditor} as="span" maxLength={25} /></span>
                             <span className="font-sans text-[10px] @md:text-sm font-medium text-slate-300">{currentTime}</span>
                         </div>
                     </motion.div>
 
                     <motion.div variants={fadeUp} className={`mb-16 @md:mb-20`}>
                         <h1 className={`font-serif leading-[0.85] tracking-tight text-5xl @md:text-7xl @lg:text-[9cqi]`}>
-                            {firstName} <br />
-                            <span className="italic text-outline">{lastName || 'PORTFOLIO'}</span>
+                            <EditableText value={firstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} /> <br />
+                            <span className="italic text-outline"><EditableText value={lastName} field="lastName" entity="profile" isEditor={isEditor} as="span" maxLength={15} /></span>
                         </h1>
                     </motion.div>
                 </motion.div>
@@ -203,13 +204,13 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
                             initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                             className={`font-serif leading-tight text-3xl @md:text-5xl @lg:text-[3.5cqi]`}
                         >
-                            {bio}
+                            <EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" maxLength={250} />
                         </motion.h2>
                     </div>
                     
                     <div className={`w-full flex flex-col gap-6 @md:gap-8 @md:w-1/3`}>
                         <motion.p initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className={`font-sans font-medium text-slate-600 leading-relaxed border-l-2 border-black text-sm pl-4 @md:text-xl @md:pl-6`}>
-                            I am a <strong className="text-black">{profession}</strong> specializing in pushing the boundaries of digital and visual aesthetics.
+                            I am a <strong className="text-black"><EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={30} /></strong> specializing in pushing the boundaries of digital and visual aesthetics.
                         </motion.p>
                         
                         <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className={`flex flex-col gap-3 mt-4 @md:mt-8`}>
@@ -242,7 +243,7 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
                 {/* Header Portofolio & Tombol Kontrol */}
                 <div className={`flex justify-between items-end mb-12 @md:mb-20 px-6 @md:px-12`}>
                     <motion.h2 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className={`font-serif leading-none text-white text-4xl @md:text-5xl @lg:text-[5cqi]`}>
-                        Selected<br/><span className="italic text-[var(--hl)]">Archives</span>
+                        <EditableText value={theme?.customTexts?.projects_title || 'Selected Archives'} field="projects_title" entity="appearance" isEditor={isEditor} maxLength={30} as="span" />
                     </motion.h2>
                     
                     {/* Navigation Buttons */}
@@ -315,7 +316,7 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
 
                 <div className={`w-full flex justify-center mt-12 px-6 @md:px-12`}>
                     <Link href={`/${subdomain}/gallery`} scroll={false} className="group flex items-center gap-4">
-                        <span className={`font-serif text-white group-hover:text-[var(--hl)] transition-colors italic text-2xl @md:text-3xl @lg:text-5xl`}>View Full Catalog</span>
+                        <span className={`font-serif text-white group-hover:text-[var(--hl)] transition-colors italic text-2xl @md:text-3xl @lg:text-5xl`}><EditableText value={theme?.customTexts?.explore_archive || 'View Full Catalog'} field="explore_archive" entity="appearance" isEditor={isEditor} maxLength={30} as="span" /></span>
                         <div className={`rounded-full border border-white/20 flex items-center justify-center group-hover:border-[var(--hl)] transition-colors w-10 h-10 @md:w-12 @md:h-12`}>
                             <i className="fas fa-arrow-right text-white group-hover:text-[var(--hl)]"></i>
                         </div>
@@ -328,7 +329,7 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
                 <section className="relative z-20 w-full bg-[#050505] py-20 @md:py-32 border-t border-white/5">
                     <div className="flex justify-between items-end mb-12 @md:mb-20 px-6 @md:px-12">
                         <motion.h2 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="font-serif leading-none text-white text-4xl @md:text-5xl @lg:text-[5cqi]">
-                            Interactive<br/><span className="italic text-[var(--hl)]">Models</span>
+                            <EditableText value={theme?.customTexts?.models_title || 'Interactive Models'} field="models_title" entity="appearance" isEditor={isEditor} maxLength={30} as="span" />
                         </motion.h2>
                     </div>
                     <div className="flex flex-col gap-12 @md:gap-20 px-6 @md:px-12 pb-20">
@@ -376,7 +377,7 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
                 <section className="relative z-20 w-full bg-[#050505] py-20 @md:py-32 border-t border-white/5">
                     <div className="flex justify-between items-end mb-12 @md:mb-20 px-6 @md:px-12">
                         <motion.h2 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="font-serif leading-none text-white text-4xl @md:text-5xl @lg:text-[5cqi]">
-                            Client<br/><span className="italic text-[var(--hl)]">Voices</span>
+                            <EditableText value={theme?.customTexts?.testimonials_title || 'Client Voices'} field="testimonials_title" entity="appearance" isEditor={isEditor} maxLength={30} as="span" />
                         </motion.h2>
                     </div>
                     <div className="grid grid-cols-1 @md:grid-cols-2 gap-6 @md:gap-12 px-6 @md:px-12 pb-10">
@@ -419,7 +420,7 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
             {awardItems.length > 0 && (
                 <section id="awards" className={`relative z-[100] w-full bg-[#f4f4f5] text-black mt-[-20px] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] rounded-t-[30px] @md:rounded-t-[40px] py-16 px-6 @md:py-24 @md:py-32 @md:px-12`}>
                     <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="mb-10 @md:mb-16">
-                        <h2 className={`font-serif font-bold text-4xl @md:text-7xl`}>Honors & <br/><span className="italic text-slate-400">Recognitions</span></h2>
+                        <h2 className={`font-serif font-bold text-4xl @md:text-7xl`}><EditableText value={theme?.customTexts?.awards_title || 'Honors & Recognitions'} field="awards_title" entity="appearance" isEditor={isEditor} maxLength={40} as="span" /></h2>
                     </motion.div>
 
                     <div className="w-full flex flex-col border-t border-black">
@@ -450,11 +451,11 @@ export default function MonolithTheme({ data, theme, isMobileView = false, isCar
             {/* SECTION 5: FOOTER (KEMBALI KE HITAM) */}
             <footer className={`relative z-[110] w-full bg-[#050505] flex flex-col pt-24 pb-8 px-6 @md:pt-32 @md:pb-12 @md:px-12`}>
                 <div className={`flex flex-col items-center text-center mb-32`}>
-                    <span className={`font-sans font-bold uppercase tracking-[0.3em] text-[var(--hl)] text-xs mb-8`}>Got a project in mind?</span>
+                    <span className={`font-sans font-bold uppercase tracking-[0.3em] text-[var(--hl)] text-xs mb-8`}><EditableText value={theme?.customTexts?.cta_subtitle || 'Got a project in mind?'} field="cta_subtitle" entity="appearance" isEditor={isEditor} maxLength={30} as="span" /></span>
                     
                     <div onClick={handleCopyEmail} className="cursor-pointer group relative">
                         <h2 className={`font-serif leading-[0.8] text-white transition-colors duration-500 text-5xl @md:text-7xl @lg:text-[10cqi]`}>
-                            Let's <span className="italic text-outline group-hover:text-[var(--hl)] group-hover:-webkit-text-stroke-0 transition-all duration-500">Create</span>
+                            <EditableText value={theme?.customTexts?.cta_title || "Let's Create"} field="cta_title" entity="appearance" isEditor={isEditor} maxLength={30} as="span" />
                         </h2>
                         <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[var(--hl)] text-black rounded-full font-sans font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-300 shadow-2xl pointer-events-none px-4 py-2 text-[9px] @md:px-6 @md:py-3 @md:text-sm`}>
                             {isCopied ? 'Email Copied!' : 'Copy Email'}

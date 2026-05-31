@@ -11,6 +11,7 @@ import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { EditableText } from '@/components/ui/EditableText';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -92,25 +93,31 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
                         <div className="w-8 h-8 rounded-full overflow-hidden border border-white/20">
                             <LazyImage src={displayAvatar} alt={displayFirstName} className="w-full h-full object-cover grayscale" />
                         </div>
-                        <span className="font-sans font-bold tracking-tight text-white uppercase text-xs">{displayFirstName}</span>
+                        <span className="font-sans font-bold tracking-tight text-white uppercase text-xs">
+                            <EditableText value={displayFirstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
+                        </span>
                     </div>
                 </header>
 
                 <div className="relative z-10 my-16 @lg:my-auto">
                     <motion.p initial="hidden" animate="visible" variants={fadeUp} className="font-sans text-xs font-bold uppercase tracking-widest text-[var(--hl)] mb-6 flex items-center gap-4">
                         <span className="w-8 h-[1px] bg-[var(--hl)] opacity-50"></span>
-                        {profession}
+                        <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={30} />
                     </motion.p>
                     <motion.h1 initial="hidden" animate="visible" variants={fadeUp} className="font-serif text-5xl @md:text-6xl @lg:text-7xl leading-[0.9] mb-8 uppercase tracking-tighter break-words">
-                        <span className="block text-white">{displayFirstName}</span>
-                        <span className="block text-stroke text-stroke-hover transition-all duration-500 cursor-default">{displayLastName}</span>
+                        <span className="block text-white">
+                            <EditableText value={displayFirstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
+                        </span>
+                        <span className="block text-stroke text-stroke-hover transition-all duration-500 cursor-default">
+                            <EditableText value={displayLastName} field="lastName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
+                        </span>
                     </motion.h1>
                     <motion.p initial="hidden" animate="visible" variants={fadeUp} className="font-sans text-slate-400 font-medium leading-relaxed max-w-sm text-sm @md:text-base">
-                        {bio}
+                        <EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" maxLength={250} />
                     </motion.p>
                     <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mt-10 flex gap-4">
                         <button onClick={handleCopyEmail} className={`px-6 py-3 border border-white/10 hover:border-[var(--hl)] bg-white/5 hover:bg-[var(--hl)]/10 text-white font-sans text-xs font-bold uppercase tracking-widest transition-all duration-300 flex items-center gap-3 backdrop-blur-md ${radiusClass}`}>
-                            {isCopied ? 'Access Granted' : 'Initiate Contact'}
+                            {isCopied ? 'Access Granted' : <EditableText value={theme?.customTexts?.midnight_btn_contact || 'Initiate Contact'} field="midnight_btn_contact" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />}
                         </button>
                     </motion.div>
                 </div>
@@ -124,7 +131,9 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
 
             <div className="relative z-10 w-full @lg:w-7/12 bg-[#05070a] flex flex-col">
                 <div className="hidden @lg:flex h-32 items-center justify-center border-b border-white/5 shrink-0">
-                    <span className="font-serif italic text-slate-600 text-sm tracking-widest">Scroll to explore</span>
+                    <span className="font-serif italic text-slate-600 text-sm tracking-widest">
+                        <EditableText value={theme?.customTexts?.midnight_scroll || 'Scroll to explore'} field="midnight_scroll" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                    </span>
                 </div>
 
                 <div className="p-6 @md:p-12 @lg:p-20 flex flex-col gap-24 @lg:gap-40 shrink-0">
@@ -146,7 +155,9 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
                             >
                                 <div className="flex justify-between items-end mb-4 border-b border-white/10 pb-4">
                                     <div className="flex flex-col">
-                                        <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-1">Scene {sceneNumber}</span>
+                                        <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-1">
+                                            <EditableText value={theme?.customTexts?.midnight_scene_label || 'Scene'} field="midnight_scene_label" entity="appearance" isEditor={isEditor} as="span" maxLength={15} /> {sceneNumber}
+                                        </span>
                                         <h2 className="font-serif text-2xl @md:text-4xl text-white group-hover:text-[var(--hl)] transition-colors">{p.title}</h2>
                                     </div>
                                     <span className="font-sans text-xs font-medium text-slate-500 hidden @md:block uppercase">{p.projectType}</span>
@@ -174,8 +185,12 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
                 {items3D.length > 0 && (
                     <div className="p-6 @md:p-12 @lg:p-20 flex flex-col gap-12 @lg:gap-16 border-t border-white/5 shrink-0">
                         <div className="flex flex-col mb-4">
-                            <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-2">Spatial Division</span>
-                            <h2 className="font-serif text-3xl @md:text-5xl text-white">3D Models</h2>
+                            <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-2">
+                                <EditableText value={theme?.customTexts?.midnight_3d_top || 'Spatial Division'} field="midnight_3d_top" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                            </span>
+                            <h2 className="font-serif text-3xl @md:text-5xl text-white">
+                                <EditableText value={theme?.customTexts?.midnight_3d_title || '3D Models'} field="midnight_3d_title" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                            </h2>
                         </div>
                         
                         <div className="flex flex-col gap-12 @md:gap-24">
@@ -190,7 +205,9 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
                                         <div className="flex justify-between items-end mb-6 border-b border-white/10 pb-6">
                                             <div className="flex flex-col gap-3">
                                                 <div className="flex items-center gap-4">
-                                                    <span className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-[var(--hl)]">Spatial Layer {sceneNumber}</span>
+                                                    <span className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-[var(--hl)]">
+                                                        <EditableText value={theme?.customTexts?.midnight_3d_layer || 'Spatial Layer'} field="midnight_3d_layer" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /> {sceneNumber}
+                                                    </span>
                                                     <div className="h-px w-10 bg-white/10"></div>
                                                 </div>
                                                 <h2 className="font-serif text-4xl @md:text-7xl text-white group-hover:text-[var(--hl)] transition-colors leading-none">{p.title}</h2>
@@ -229,8 +246,12 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
                 {testimonials.length > 0 && (
                     <div className="p-6 @md:p-12 @lg:p-20 flex flex-col border-t border-white/5 bg-[#030508]/50 shrink-0">
                         <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="mb-12">
-                            <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-2 block">Client Experience</span>
-                            <h2 className="font-serif text-3xl @md:text-5xl text-white">Endorsements</h2>
+                            <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-2 block">
+                                <EditableText value={theme?.customTexts?.midnight_testi_top || 'Client Experience'} field="midnight_testi_top" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                            </span>
+                            <h2 className="font-serif text-3xl @md:text-5xl text-white">
+                                <EditableText value={theme?.customTexts?.midnight_testi_title || 'Endorsements'} field="midnight_testi_title" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                            </h2>
                         </motion.div>
                         <div className="grid grid-cols-1 @md:grid-cols-2 gap-8 @md:gap-12">
                             {testimonials.map((t: any, i: number) => (
@@ -272,8 +293,12 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
                 {awardItems.length > 0 && (
                     <div id="awards" className="p-6 @md:p-12 @lg:p-20 flex flex-col border-t border-white/5 bg-[#030508]/50 shrink-0">
                         <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="mb-12">
-                            <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-2 block">Accolades</span>
-                            <h2 className="font-serif text-3xl @md:text-5xl text-white">Recognitions</h2>
+                            <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)] mb-2 block">
+                                <EditableText value={theme?.customTexts?.midnight_awards_top || 'Accolades'} field="midnight_awards_top" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                            </span>
+                            <h2 className="font-serif text-3xl @md:text-5xl text-white">
+                                <EditableText value={theme?.customTexts?.midnight_awards_title || 'Recognitions'} field="midnight_awards_title" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                            </h2>
                         </motion.div>
                         <div className="flex flex-col border-t border-white/10">
                             {awardItems.map((award: any, i: number) => (
@@ -303,7 +328,7 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
 
                 <div className="pt-20 border-t border-white/5 flex justify-center pb-32 bg-[#05070a] shrink-0">
                     <Link href={`/${subdomain}/gallery`} scroll={false} className="group relative overflow-hidden font-serif italic text-3xl @md:text-5xl text-slate-500 hover:text-white transition-colors duration-500 flex items-center gap-6">
-                        <span>Open Full Archive</span>
+                        <EditableText value={theme?.customTexts?.midnight_archive || 'Open Full Archive'} field="midnight_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                         <i className="fas fa-arrow-right text-[var(--hl)] -rotate-45 group-hover:rotate-0 transition-transform duration-500"></i>
                     </Link>
                 </div>
@@ -323,7 +348,9 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
                             {/* Header */}
                             <div className="flex justify-between items-center px-5 py-3 @md:px-6 border-b border-white/5 bg-black/20">
                                 <div className="flex flex-col">
-                                    <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)]">Developing Room</span>
+                                    <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--hl)]">
+                                        <EditableText value={theme?.customTexts?.midnight_modal_top || 'Developing Room'} field="midnight_modal_top" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                                    </span>
                                     <h3 className="font-serif text-lg @md:text-xl text-white leading-tight">{selectedMedia.title}</h3>
                                 </div>
                                 <button onClick={() => setSelectedMedia(null)} className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-white hover:rotate-90 transition-all duration-300 shrink-0">
@@ -346,10 +373,12 @@ export default function MidnightEmulsionTheme({ data, theme, isMobileView = fals
                             {/* Footer */}
                             <div className="flex justify-between items-center px-5 py-2.5 @md:px-6 bg-black/40 border-t border-white/5 font-sans text-[10px] font-bold uppercase tracking-widest text-slate-500">
                                 <div className="flex items-center gap-5">
-                                    <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[var(--hl)]"></span> Focus: Active</span>
-                                    <span className="hidden @md:inline">Emulsion: Fixed</span>
+                                    <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[var(--hl)]"></span> <EditableText value={theme?.customTexts?.midnight_modal_f1 || 'Focus: Active'} field="midnight_modal_f1" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /></span>
+                                    <span className="hidden @md:inline"><EditableText value={theme?.customTexts?.midnight_modal_f2 || 'Emulsion: Fixed'} field="midnight_modal_f2" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /></span>
                                 </div>
-                                <button onClick={() => setSelectedMedia(null)} className="hover:text-[var(--hl)] transition-colors tracking-[0.4em]">/ Close_Scene</button>
+                                <button onClick={() => setSelectedMedia(null)} className="hover:text-[var(--hl)] transition-colors tracking-[0.4em]">
+                                    <EditableText value={theme?.customTexts?.midnight_modal_close || '/ Close_Scene'} field="midnight_modal_close" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                                </button>
                             </div>
                         </motion.div>
                     </motion.div>

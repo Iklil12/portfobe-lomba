@@ -4,6 +4,7 @@
 import { SessionProvider } from "next-auth/react";
 import { SWRConfig } from "swr";
 import { Toaster, resolveValue, toast } from 'react-hot-toast';
+import { usePathname } from "next/navigation";
 
 const globalFetcher = (url: string) =>
   fetch(url, { cache: 'no-store' }).then((res) => {
@@ -12,18 +13,23 @@ const globalFetcher = (url: string) =>
   });
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
-      <SWRConfig
-        value={{
-          fetcher: globalFetcher,
-          revalidateOnFocus: true,
-          focusThrottleInterval: 10000,
-          dedupingInterval: 10000,
-          revalidateOnReconnect: true,
-        }}
-      >
-        {children}
+  const pathname = usePathname();
+  const isPublicPage = pathname === "/" || 
+                       pathname === "/pricing" || 
+                       pathname === "/privacy" || 
+                       pathname === "/terms";
+
+  const swrAndToastContent = (
+    <SWRConfig
+      value={{
+        fetcher: globalFetcher,
+        revalidateOnFocus: true,
+        focusThrottleInterval: 10000,
+        dedupingInterval: 10000,
+        revalidateOnReconnect: true,
+      }}
+    >
+      {children}
         <Toaster position="top-center" containerStyle={{ zIndex: 1000000, marginTop: '20px' }}>
         {(t) => {
           const message = resolveValue(t.message, t) as React.ReactNode;
@@ -98,6 +104,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
         }}
         </Toaster>
       </SWRConfig>
+  );
+
+  if (isPublicPage) {
+    return swrAndToastContent;
+  }
+
+  return (
+    <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
+      {swrAndToastContent}
     </SessionProvider>
   );
 }

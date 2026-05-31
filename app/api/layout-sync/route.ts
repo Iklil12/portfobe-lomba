@@ -32,7 +32,7 @@ export async function GET(req: Request) {
       profession: user.profile?.profession || null,
       bio: user.profile?.bio || null,
       avatar: user.profile?.avatarUrl || user.avatar || null,
-      plan: "PRO",
+      plan: user.plan || "FREE",
       fullName: user.profile?.fullName,
       email: user.email,
     });

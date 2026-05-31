@@ -2,11 +2,16 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { Resend } from "resend";
+import { checkRateLimit } from "@/lib/rate-limit";
 
-const resend = new Resend(process.env.RESEND_API_KEY || "re_dummy_key_buat_build_doang");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
+    // Rate limit: maks 5 request per menit (mencegah brute-force token)
+    const rateLimitResponse = await checkRateLimit(5, 60000);
+    if (rateLimitResponse) return rateLimitResponse;
+
     const { token, password } = await req.json();
 
     if (!token || !password || password.length < 6) {

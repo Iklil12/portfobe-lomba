@@ -48,7 +48,16 @@ export async function POST() {
   const user = await prisma.user.findUnique({ where: { email: session.user.email } });
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-  // Limit checking removed for Lomba Edition
+  if (user.plan === 'FREE') {
+    const linkCount = await prisma.link.count({ where: { userId: user.id } });
+    if (linkCount >= 1) {
+      return NextResponse.json({ 
+        error: "Kuota FREE maksimal 1 tautan. Silakan upgrade ke PRO.",
+        code: "QUOTA_EXCEEDED"
+      }, { status: 403 });
+    }
+  }
+  // -----------------------------------------
 
   // --- ACTIVE LIMIT: CEK MAKSIMAL 4 LINK AKTIF ---
   const activeCount = await prisma.link.count({ 

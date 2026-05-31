@@ -42,7 +42,7 @@ export default function PreviewPage() {
 
   return (
     <main className="min-h-screen relative overflow-x-clip bg-white">
-      <PortfolioView data={data} theme={theme} isMobileView={isMobileView} isCardPreview={false} />
+      <PortfolioView data={data} theme={theme} isMobileView={isMobileView} isCardPreview={false} isEditor={true} />
     </main>
   );
 }

@@ -104,12 +104,12 @@ export default function AnalyticsPage() {
   const deviceData = isFree
     ? [
         { name: 'Desktop', pct: 58, color: '#0f172a' },
-        { name: 'Mobile', pct: 36, color: '#6366f1' },
+        { name: 'Mobile', pct: 36, color: '#ff9e00' },
         { name: 'Tablet', pct: 6, color: '#e2e8f0' },
       ]
     : [
         { name: 'Desktop', pct: stats.devices?.desktop || 0, color: '#0f172a' },
-        { name: 'Mobile', pct: stats.devices?.mobile || 0, color: '#6366f1' },
+        { name: 'Mobile', pct: stats.devices?.mobile || 0, color: '#ff9e00' },
         { name: 'Tablet', pct: stats.devices?.tablet || 0, color: '#e2e8f0' },
       ];
 
@@ -255,10 +255,10 @@ export default function AnalyticsPage() {
             </div>
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1.5 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                <span className="w-2.5 h-2.5 rounded-full bg-slate-900 inline-block" /> Page Views
+                <span className="w-2.5 h-2.5 rounded-full bg-[#ff9e00] inline-block" /> Page Views
               </span>
               <span className="flex items-center gap-1.5 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" /> Uniq. Visitors
+                <span className="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block" /> Uniq. Visitors
               </span>
             </div>
           </div>
@@ -270,16 +270,16 @@ export default function AnalyticsPage() {
                   <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="viewsGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#0f172a" stopOpacity={0.12} />
-                        <stop offset="95%" stopColor="#0f172a" stopOpacity={0} />
+                        <stop offset="5%" stopColor="#ff9e00" stopOpacity={0.12} />
+                        <stop offset="95%" stopColor="#ff9e00" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                     <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 800, fill: '#94a3b8' }} dy={10} />
                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 800, fill: '#94a3b8' }} />
                     <Tooltip content={<CustomAreaTooltip isHourly={range === '1d'} />} cursor={{ stroke: '#e2e8f0', strokeWidth: 1 }} />
-                    <Area type="monotone" dataKey="views" name="Page Views" stroke="#0f172a" strokeWidth={2.5} fill="url(#viewsGrad)" dot={false} activeDot={{ r: 5, fill: '#0f172a', stroke: '#fff', strokeWidth: 2 }} animationDuration={1500} />
-                    <Area type="monotone" dataKey="visitors" name="Uniq. Visitors" stroke="#3b82f6" strokeWidth={2.5} fill="transparent" dot={false} activeDot={{ r: 5, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }} animationDuration={1500} />
+                    <Area type="monotone" dataKey="views" name="Page Views" stroke="#ff9e00" strokeWidth={2.5} fill="url(#viewsGrad)" dot={false} activeDot={{ r: 5, fill: '#ff9e00', stroke: '#fff', strokeWidth: 2 }} animationDuration={1500} />
+                    <Area type="monotone" dataKey="visitors" name="Uniq. Visitors" stroke="#94a3b8" strokeWidth={2.5} fill="transparent" dot={false} activeDot={{ r: 5, fill: '#94a3b8', stroke: '#fff', strokeWidth: 2 }} animationDuration={1500} />
                   </AreaChart>
                 </ResponsiveContainer>
               ) : (

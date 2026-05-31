@@ -2,11 +2,16 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Resend } from "resend";
 import crypto from "crypto";
+import { checkRateLimit } from "@/lib/rate-limit";
 
-const resend = new Resend(process.env.RESEND_API_KEY || "re_dummy_key_buat_build_doang");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
+    // Rate limit ketat: maks 3 request per menit (mencegah email flooding)
+    const rateLimitResponse = await checkRateLimit(3, 60000);
+    if (rateLimitResponse) return rateLimitResponse;
+
     const { email } = await req.json();
 
     // 1. Cari user di database

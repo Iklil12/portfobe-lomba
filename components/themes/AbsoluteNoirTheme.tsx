@@ -11,6 +11,7 @@ import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { EditableText } from '@/components/ui/EditableText';
 
 export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, isCardPreview = false, isEditor = false }: { data: any, theme: any, isMobileView?: boolean, isCardPreview?: boolean, isEditor?: boolean }) {
     const [isCopied, setIsCopied] = useState(false);
@@ -76,11 +77,11 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
 
     return (
         <div className="relative noir-root">
-        <main className="relative bg-[#050505] text-white font-sans selection:bg-white selection:text-black @container tracking-tight noir-theme" style={{ filter: 'grayscale(100%) contrast(1.2)' }}>
+        <main className="relative bg-[#050505] text-white font-sans selection:bg-white selection:text-black @container tracking-tight noir-theme">
             <style dangerouslySetInnerHTML={{
                     __html: `
-            .noir-theme .font-sans { font-family: ${customBodyFont}; }
-            .noir-theme .font-mono { font-family: 'Space Mono', monospace; }
+            .noir-theme .font-sans { font-family: ${customHeadingFont} !important; }
+            .noir-theme .font-mono { font-family: ${customBodyFont} !important; }
             @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
             .animate-ticker { animation: ticker 30s linear infinite; }
             .wire-border-b { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
@@ -95,10 +96,10 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
                 <div className="flex animate-ticker font-mono text-xs font-bold uppercase tracking-[0.2em] whitespace-nowrap w-max">
                     {[...Array(8)].map((_, i) => (
                         <div key={i} className="flex items-center gap-8 px-4 pr-8">
-                            <span>PORTFO_BE V.2.0</span>
-                            <span>[ STATUS: ACTIVE ]</span>
-                            <span>{profession}</span>
-                            <span>LOCATION: ID</span>
+                            <EditableText value={theme?.customTexts?.noir_ticker_title || 'PORTFO_BE V.2.0'} field="noir_ticker_title" entity="appearance" isEditor={isEditor} maxLength={25} />
+                            <EditableText value={theme?.customTexts?.noir_ticker_status || '[ STATUS: ACTIVE ]'} field="noir_ticker_status" entity="appearance" isEditor={isEditor} maxLength={25} />
+                            <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={20} />
+                            <EditableText value={theme?.customTexts?.noir_ticker_location || 'LOCATION: ID'} field="noir_ticker_location" entity="appearance" isEditor={isEditor} maxLength={20} />
                         </div>
                     ))}
                 </div>
@@ -108,25 +109,29 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
                 <div className="w-full @lg:w-8/12 flex flex-col">
                     <motion.div variants={wireframeReveal} className="p-6 @md:p-12 wire-border-b flex-1 flex flex-col justify-center overflow-hidden">
                         <h1 className="font-sans font-black text-[14cqw] @md:text-[12cqw] @lg:text-[8cqw] leading-[0.9] uppercase tracking-tighter break-words">
-                            {firstName}
+                            <EditableText value={firstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
                         </h1>
                         <h1 className="font-sans font-black text-[14cqw] @md:text-[12cqw] @lg:text-[8cqw] leading-[0.9] uppercase tracking-tighter break-words text-transparent" style={{ WebkitTextStroke: '2px white' }}>
-                            {lastName}
+                            <EditableText value={lastName || '.'} field="lastName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
                         </h1>
                     </motion.div>
                     
                     <div className="grid grid-cols-1 @md:grid-cols-2">
                         <motion.div variants={wireframeReveal} className="p-6 wire-border-b @md:wire-border-b-0 @md:wire-border-r flex flex-col justify-between min-h-[200px]">
-                            <span className="font-mono text-xs text-white/50 uppercase">[ OVERVIEW ]</span>
+                            <span className="font-mono text-xs text-white/50 uppercase">
+                                <EditableText value={theme?.customTexts?.noir_overview_label || '[ OVERVIEW ]'} field="noir_overview_label" entity="appearance" isEditor={isEditor} maxLength={20} as="span" />
+                            </span>
                             <p className="font-sans text-sm @md:text-base font-medium leading-relaxed mt-4">
-                                {bio}
+                                <EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" maxLength={250} />
                             </p>
                         </motion.div>
                         <motion.div variants={wireframeReveal} className="p-0 flex flex-col justify-end">
                             <button onClick={handleCopyEmail} className="w-full h-full min-h-[100px] hover-invert wire-border-t @md:wire-border-t-0 p-6 flex flex-col justify-between items-start group transition-colors">
-                                <span className="font-mono text-xs uppercase">[ CONTACT ]</span>
+                                <span className="font-mono text-xs uppercase">
+                                    <EditableText value={theme?.customTexts?.noir_contact_label || '[ CONTACT ]'} field="noir_contact_label" entity="appearance" isEditor={isEditor} maxLength={20} as="span" />
+                                </span>
                                 <span className="font-sans text-2xl font-bold uppercase mt-4">
-                                    {isCopied ? 'COPIED TO CLIPBOARD' : 'INITIATE COMM'}
+                                    {isCopied ? 'COPIED TO CLIPBOARD' : <EditableText value={theme?.customTexts?.noir_contact_button || 'INITIATE COMM'} field="noir_contact_button" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />}
                                 </span>
                             </button>
                         </motion.div>
@@ -135,8 +140,8 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
 
                 <motion.div variants={wireframeReveal} className="w-full @lg:w-4/12 wire-border-t @lg:wire-border-t-0 @lg:wire-border-l flex flex-col bg-[#0a0a0a]">
                     <div className="p-4 wire-border-b flex justify-between font-mono text-[10px] uppercase text-white/50">
-                        <span>IMG_REF_01</span>
-                        <span>HQ_RESOLUTION</span>
+                        <EditableText value={theme?.customTexts?.noir_img_ref || 'IMG_REF_01'} field="noir_img_ref" entity="appearance" isEditor={isEditor} maxLength={15} as="span" />
+                        <EditableText value={theme?.customTexts?.noir_img_res || 'HQ_RESOLUTION'} field="noir_img_res" entity="appearance" isEditor={isEditor} maxLength={15} as="span" />
                     </div>
                     <div className="w-full aspect-square @lg:aspect-auto @lg:flex-1 p-6 relative group overflow-hidden">
                         <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/20 z-10 pointer-events-none"></div>
@@ -144,30 +149,40 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
                         <LazyImage src={displayAvatar} alt={fullName} className="w-full h-full object-cover grayscale-[100%] contrast-[1.3] brightness-90 group-hover:scale-105 transition-transform duration-700" />
                     </div>
                     <div className="p-4 wire-border-t font-mono text-xs text-center uppercase tracking-widest bg-white text-black font-bold">
-                        {profession}
+                        <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={20} />
                     </div>
                 </motion.div>
             </motion.section>
 
             <motion.section initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerGrid} className="w-full flex flex-col @md:flex-row wire-border-b bg-[#050505]">
                 <motion.div variants={wireframeReveal} className="flex-1 p-8 @md:p-12 wire-border-b @md:wire-border-b-0 @md:wire-border-r flex flex-col items-start justify-center group hover-invert transition-colors">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] mb-4 text-white/50 group-hover:text-black/50">[ ARCHIVED_PROJECTS ]</span>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] mb-4 text-white/50 group-hover:text-black/50">
+                        <EditableText value={theme?.customTexts?.stats_projects || '[ ARCHIVED_PROJECTS ]'} field="stats_projects" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
+                    </span>
                     <h3 className="font-sans font-black text-6xl @md:text-8xl tracking-tighter leading-none">{totalProjects < 10 ? `0${totalProjects}` : totalProjects}</h3>
                 </motion.div>
                 <motion.div variants={wireframeReveal} className="flex-1 p-8 @md:p-12 wire-border-b @md:wire-border-b-0 @md:wire-border-r flex flex-col items-start justify-center group hover-invert transition-colors">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] mb-4 text-white/50 group-hover:text-black/50">[ RECOGNITIONS ]</span>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] mb-4 text-white/50 group-hover:text-black/50">
+                        <EditableText value={theme?.customTexts?.stats_recognition || '[ RECOGNITIONS ]'} field="stats_recognition" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
+                    </span>
                     <h3 className="font-sans font-black text-6xl @md:text-8xl tracking-tighter leading-none">{totalAwards < 10 ? `0${totalAwards}` : totalAwards}</h3>
                 </motion.div>
                 <motion.div variants={wireframeReveal} className="flex-1 p-8 @md:p-12 flex flex-col items-start justify-center group hover-invert transition-colors">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] mb-4 text-white/50 group-hover:text-black/50">[ SYSTEM_UPTIME ]</span>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] mb-4 text-white/50 group-hover:text-black/50">
+                        <EditableText value={theme?.customTexts?.noir_stats_uptime || '[ SYSTEM_UPTIME ]'} field="noir_stats_uptime" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
+                    </span>
                     <h3 className="font-sans font-black text-6xl @md:text-8xl tracking-tighter leading-none">99<span className="text-2xl @md:text-4xl">%</span></h3>
                 </motion.div>
             </motion.section>
 
             <motion.section initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerGrid} id="work" className="w-full flex flex-col">
                 <motion.div variants={wireframeReveal} className="w-full py-4 px-6 wire-border-b flex justify-between items-center bg-[#0a0a0a]">
-                    <span className="font-mono text-sm uppercase tracking-widest">[ SYSTEM_ARCHIVE ]</span>
-                    <span className="font-mono text-xs text-white/50">DISPLAYING: {archiveItems.length} ITEMS</span>
+                    <span className="font-mono text-sm uppercase tracking-widest">
+                        <EditableText value={theme?.customTexts?.noir_archive_label || '[ SYSTEM_ARCHIVE ]'} field="noir_archive_label" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
+                    </span>
+                    <span className="font-mono text-xs text-white/50">
+                        <EditableText value={theme?.customTexts?.noir_archive_displaying || 'DISPLAYING:'} field="noir_archive_displaying" entity="appearance" isEditor={isEditor} maxLength={15} as="span" /> {archiveItems.length} <EditableText value={theme?.customTexts?.noir_archive_items || 'ITEMS'} field="noir_archive_items" entity="appearance" isEditor={isEditor} maxLength={10} as="span" />
+                    </span>
                 </motion.div>
 
                 <div className="grid grid-cols-1 @md:grid-cols-12 auto-rows-min">
@@ -219,9 +234,11 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
                 <motion.div variants={wireframeReveal} className="w-full">
                     <Link href={`/${subdomain}/gallery`} scroll={false} className="w-full flex items-center justify-between p-8 @md:p-12 bg-white text-black hover:bg-black hover:text-white transition-colors duration-300 group border-b-2 border-transparent hover:border-white">
                         <div className="flex flex-col items-start">
-                            <span className="font-mono text-[10px] @md:text-xs font-bold uppercase tracking-[0.3em] mb-2 opacity-50 group-hover:opacity-100 transition-opacity">[ DATA_OVERFLOW ]</span>
+                            <span className="font-mono text-[10px] @md:text-xs font-bold uppercase tracking-[0.3em] mb-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                                <EditableText value={theme?.customTexts?.noir_explore_label || '[ DATA_OVERFLOW ]'} field="noir_explore_label" entity="appearance" isEditor={isEditor} maxLength={20} as="span" />
+                            </span>
                             <span className="font-sans font-black text-3xl @md:text-6xl uppercase tracking-tighter group-hover:italic group-hover:pl-4 transition-all duration-300">
-                                Explore Archive
+                                <EditableText value={theme?.customTexts?.explore_archive || 'Explore Archive'} field="explore_archive" entity="appearance" isEditor={isEditor} maxLength={20} as="span" />
                             </span>
                         </div>
                         <div className="w-16 h-16 @md:w-24 @md:h-24 flex items-center justify-center border-4 border-black group-hover:border-white rounded-full transition-colors duration-300 shrink-0 ml-4">
@@ -240,10 +257,14 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
                         className="mb-10 flex justify-between items-end"
                     >
                         <div>
-                            <h2 className="font-sans font-black text-3xl @md:text-5xl tracking-tighter uppercase mb-2">3D <span className="text-white/40">Models</span></h2>
-                            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/50">Interactive Viewer</span>
+                            <h2 className="font-sans font-black text-3xl @md:text-5xl tracking-tighter uppercase mb-2">
+                                <EditableText value={theme?.customTexts?.models_title || '3D Models'} field="models_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
+                            </h2>
+                            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/50">
+                                <EditableText value={theme?.customTexts?.models_subtitle || 'Interactive Viewer'} field="models_subtitle" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
+                            </span>
                         </div>
-                        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/50 bg-white/5 px-2 py-1 border border-white/10">{items3D.length} ASSETS</span>
+                        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/50 bg-white/5 px-2 py-1 border border-white/10">{items3D.length} <EditableText value={theme?.customTexts?.noir_models_assets || 'ASSETS'} field="noir_models_assets" entity="appearance" isEditor={isEditor} maxLength={15} as="span" /></span>
                     </motion.div>
 
                     <motion.div
@@ -287,17 +308,27 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
             {awardItems.length > 0 && (
                 <motion.section initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerGrid} id="awards" className="w-full">
                     <motion.div variants={wireframeReveal} className="w-full py-4 px-6 wire-border-b flex items-center bg-[#0a0a0a]">
-                        <span className="font-mono text-sm uppercase tracking-widest">[ CERTIFICATIONS_LOG ]</span>
+                        <span className="font-mono text-sm uppercase tracking-widest">
+                            <EditableText value={theme?.customTexts?.awards_title || '[ CERTIFICATIONS_LOG ]'} field="awards_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
+                        </span>
                     </motion.div>
 
                     <motion.div variants={wireframeReveal} className="w-full overflow-x-auto">
                         <table className="w-full text-left font-mono text-xs @md:text-sm whitespace-normal break-words">
                             <thead className="bg-[#111]">
                                 <tr>
-                                    <th className="p-4 wire-border-b wire-border-r font-normal text-white/50 w-16 @md:w-24 align-top">YEAR</th>
-                                    <th className="p-4 wire-border-b wire-border-r font-normal text-white/50 align-top">DESIGNATION</th>
-                                    <th className="p-4 wire-border-b wire-border-r font-normal text-white/50 align-top">ISSUER</th>
-                                    <th className="p-4 wire-border-b font-normal text-white/50 text-right align-top">STATUS</th>
+                                    <th className="p-4 wire-border-b wire-border-r font-normal text-white/50 w-16 @md:w-24 align-top">
+                                        <EditableText value={theme?.customTexts?.noir_cert_year || 'YEAR'} field="noir_cert_year" entity="appearance" isEditor={isEditor} maxLength={10} as="span" />
+                                    </th>
+                                    <th className="p-4 wire-border-b wire-border-r font-normal text-white/50 align-top">
+                                        <EditableText value={theme?.customTexts?.noir_cert_designation || 'DESIGNATION'} field="noir_cert_designation" entity="appearance" isEditor={isEditor} maxLength={20} as="span" />
+                                    </th>
+                                    <th className="p-4 wire-border-b wire-border-r font-normal text-white/50 align-top">
+                                        <EditableText value={theme?.customTexts?.noir_cert_issuer || 'ISSUER'} field="noir_cert_issuer" entity="appearance" isEditor={isEditor} maxLength={20} as="span" />
+                                    </th>
+                                    <th className="p-4 wire-border-b font-normal text-white/50 text-right align-top">
+                                        <EditableText value={theme?.customTexts?.noir_cert_status || 'STATUS'} field="noir_cert_status" entity="appearance" isEditor={isEditor} maxLength={15} as="span" />
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -328,7 +359,9 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
             {testimonials.length > 0 && (
                 <motion.section initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerGrid} id="testimonials" className="w-full">
                     <motion.div variants={wireframeReveal} className="w-full py-4 px-6 wire-border-b flex items-center bg-[#0a0a0a]">
-                        <span className="font-mono text-sm uppercase tracking-widest">[ CLIENT_ENDORSEMENTS ]</span>
+                        <span className="font-mono text-sm uppercase tracking-widest">
+                            <EditableText value={theme?.customTexts?.testimonials_title || '[ CLIENT_ENDORSEMENTS ]'} field="testimonials_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
+                        </span>
                     </motion.div>
 
                     <div className="grid grid-cols-1 @lg:grid-cols-2">
@@ -369,15 +402,17 @@ export default function AbsoluteNoirTheme({ data, theme, isMobileView = false, i
             <motion.footer initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerGrid} className="w-full flex flex-col bg-[#050505]">
                 <motion.div variants={wireframeReveal} onClick={handleCopyEmail} className="w-full p-12 @md:p-32 flex flex-col items-center justify-center text-center wire-border-b hover:bg-white hover:text-black transition-colors cursor-pointer group">
                     <span className="font-mono text-xs uppercase tracking-[0.3em] mb-6 text-white/50 group-hover:text-black/50">
-                        [ SYSTEM ALIGNMENT READY ]
+                        <EditableText value={theme?.customTexts?.noir_footer_status || '[ SYSTEM ALIGNMENT READY ]'} field="noir_footer_status" entity="appearance" isEditor={isEditor} maxLength={30} as="span" />
                     </span>
                     <h2 className="font-sans font-black text-[12cqw] @md:text-6xl @lg:text-[8cqw] leading-[1] uppercase tracking-tighter break-words">
-                        {isCopied ? 'DATA COPIED' : 'CONNECT'}
+                        {isCopied ? 'DATA COPIED' : <EditableText value={theme?.customTexts?.noir_footer_connect || 'CONNECT'} field="noir_footer_connect" entity="appearance" isEditor={isEditor} maxLength={20} as="span" />}
                     </h2>
                 </motion.div>
 
                 <motion.div variants={wireframeReveal} className="w-full flex flex-col @md:flex-row justify-between items-center p-6 gap-6 font-mono text-[10px] uppercase text-white/50">
-                    <span>END_OF_FILE © {new Date().getFullYear()}</span>
+                    <span>
+                        <EditableText value={theme?.customTexts?.noir_footer_eof || 'END_OF_FILE'} field="noir_footer_eof" entity="appearance" isEditor={isEditor} maxLength={20} as="span" /> © {new Date().getFullYear()}
+                    </span>
                     <div className="flex gap-4">
                         {links.map((l: any, i: number) => (
                             <a key={i} href={l.url} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">

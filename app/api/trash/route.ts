@@ -91,6 +91,16 @@ export async function POST(req: Request) {
       if (!id || !type) return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
 
       if (type === "project") {
+        // Cek kuota FREE
+        if (user.plan === "FREE") {
+          const activeCount = await prisma.project.count({ where: { userId: user.id, deletedAt: null } });
+          if (activeCount >= 5) {
+            return NextResponse.json({
+              error: "Kuota proyek FREE sudah penuh (5/5). Hapus proyek aktif atau upgrade ke PRO.",
+              code: "QUOTA_EXCEEDED",
+            }, { status: 403 });
+          }
+        }
         const item = await prisma.project.findUnique({ where: { id } });
         if (!item || item.userId !== user.id)
           return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
@@ -101,6 +111,15 @@ export async function POST(req: Request) {
       }
 
       if (type === "certificate") {
+        if (user.plan === "FREE") {
+          const activeCount = await prisma.certificate.count({ where: { userId: user.id, deletedAt: null } });
+          if (activeCount >= 2) {
+            return NextResponse.json({
+              error: "Kuota sertifikat FREE sudah penuh (2/2). Hapus sertifikat aktif atau upgrade ke PRO.",
+              code: "QUOTA_EXCEEDED",
+            }, { status: 403 });
+          }
+        }
         const item = await prisma.certificate.findUnique({ where: { id } });
         if (!item || item.userId !== user.id)
           return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });

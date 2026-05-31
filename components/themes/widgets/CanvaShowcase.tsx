@@ -205,8 +205,8 @@ export function CanvaShowcase({ userId, variant = 'monochrome', themeColor }: Ca
     },
     minimalist: {
       section: 'border-t border-gray-200 overflow-hidden w-full pb-8',
-      heading: 'text-2xl font-black uppercase tracking-tighter text-black px-8 @lg:px-12 pt-8 pb-2',
-      label: 'text-[10px] font-bold uppercase tracking-widest text-gray-400 px-8 @lg:px-12 mb-6 block',
+      heading: 'text-2xl font-black uppercase tracking-tighter text-black px-8 @lg:px-12 pt-8 pb-2 min-heading',
+      label: 'text-[10px] font-bold uppercase tracking-widest text-gray-400 px-8 @lg:px-12 mb-6 block min-heading',
       border: 'border-gray-200',
       cardBg: 'bg-transparent border-y border-gray-200 py-8 px-8 @lg:px-12',
       icon: 'text-black',

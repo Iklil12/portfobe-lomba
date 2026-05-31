@@ -11,6 +11,7 @@ import { GithubStats } from './widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { EditableText } from '@/components/ui/EditableText';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -53,8 +54,8 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
     const radiusClass = buttonShape === 'pill' ? 'rounded-full' : buttonShape === 'rounded' ? 'rounded-2xl' : 'rounded-none';
 
     const nameParts = fullName.split(' ');
-    const firstName = nameParts[0];
-    const lastName = nameParts.slice(1).join(' ');
+    const firstName = data?.profile?.firstName || data?.firstName || nameParts[0];
+    const lastName = data?.profile?.lastName || data?.lastName || nameParts.slice(1).join(' ');
 
     const getHeadingFont = (fontName: string) => {
         if (!fontName) return "'Syne', sans-serif";
@@ -155,14 +156,14 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                     className={`px-6 @md:px-12 relative z-10 flex flex-col items-start mt-10`}
                 >
                     <motion.div variants={fadeUp} className="acid-bg text-[#09090b] px-4 py-1.5 font-bold text-[10px] @md:text-xs uppercase tracking-[0.2em] mb-8 inline-block transform -skew-x-12 acid-body">
-                        Available for New Projects
+                        <EditableText value={theme?.customTexts?.hero_badge || 'Available for New Projects'} field="hero_badge" entity="appearance" isEditor={isEditor} maxLength={30} as="span" />
                     </motion.div>
 
                     <motion.h1 variants={fadeUp} className={`acid-heading font-extrabold uppercase tracking-tighter text-[#fafafa] mb-4 w-full leading-[0.85] break-words
                   text-5xl @md:text-[clamp(5rem,12cqi,11rem)]
               `}>
-                        {firstName} <br />
-                        <span className="text-transparent" style={{ WebkitTextStroke: '2px #fafafa' }}>{lastName || profession}</span>
+                        <EditableText value={firstName} field="firstName" entity="profile" isEditor={isEditor} as="span" className="acid-heading" maxLength={10} /> <br />
+                        <span className="text-transparent" style={{ WebkitTextStroke: '2px #fafafa' }}><EditableText value={lastName || profession} field="lastName" entity="profile" isEditor={isEditor} as="span" className="acid-heading" maxLength={10} /></span>
                     </motion.h1>
 
                     {/* Mobile Avatar */}
@@ -177,7 +178,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
 
                     <motion.div variants={fadeUp} className={`flex w-full max-w-5xl border-t-2 border-zinc-800 pt-8 flex-col gap-6 mt-2 @md:flex-row @md:gap-8 @lg:gap-16 @md:mt-8`}>
                         <p className={`text-zinc-400 font-medium leading-relaxed acid-body text-sm @md:text-lg @lg:text-xl max-w-md`}>
-                            {bio}
+                            <EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" className="acid-body" maxLength={250} />
                         </p>
                         <div className="flex flex-col gap-4 text-xs @md:text-sm font-bold uppercase tracking-widest text-zinc-300 acid-body">
                             {links.map((l: any, i: number) => (
@@ -269,7 +270,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                     initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp}
                     className="px-6 @md:px-12 mb-10 flex justify-between items-end border-b-2 border-zinc-800 pb-6"
                 >
-                    <h2 className={`acid-heading font-extrabold uppercase tracking-tighter text-4xl @md:text-[clamp(3rem,6cqi,5rem)]`}>PROJECT<br />INDEX</h2>
+                    <h2 className={`acid-heading font-extrabold uppercase tracking-tighter text-4xl @md:text-[clamp(3rem,6cqi,5rem)]`}><EditableText value={theme?.customTexts?.projects_title || 'PROJECT INDEX'} field="projects_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></h2>
                     <span className="acid-text font-bold text-xs @md:text-sm uppercase tracking-widest acid-body">Hover to Reveal</span>
                 </motion.div>
 
@@ -338,7 +339,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                                     <span className="w-2 h-2 rounded-none animate-pulse" style={{ backgroundColor: themeColor }}></span> System: Access_Granted
                                 </span>
                                 <h3 className={`acid-heading font-extrabold uppercase tracking-tighter text-[#fafafa] group-hover:text-[var(--theme-color)] transition-colors duration-300 leading-none text-3xl @md:text-5xl @lg:text-[5.5rem]`} style={{ '--theme-color': themeColor } as any}>
-                                    VIEW_FULL<br />ARCHIVE
+                                    <EditableText value={theme?.customTexts?.explore_archive || 'VIEW FULL ARCHIVE'} field="explore_archive" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
                                 </h3>
                             </div>
 
@@ -364,7 +365,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                     >
                         <h2 className="text-3xl font-extrabold uppercase tracking-tighter text-[#fafafa] acid-heading flex items-center gap-4">
                             <span className="text-4xl" style={{ color: themeColor }}>3D</span>
-                            <span className="text-[#fafafa]">OBJECTS</span>
+                            <span className="text-[#fafafa]"><EditableText value={theme?.customTexts?.models_title || 'OBJECTS'} field="models_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></span>
                         </h2>
                         <span className="text-[10px] font-bold uppercase tracking-[0.2em] acid-body" style={{ color: themeColor }}>{items3D.length} FILES</span>
                     </motion.div>
@@ -414,7 +415,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                         initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: false }} variants={fadeUp}
                         className={`acid-heading font-extrabold uppercase tracking-tighter mb-12 text-4xl @md:text-[clamp(3rem,6cqi,5rem)]`}
                     >
-                        RECOGNITION
+                        <EditableText value={theme?.customTexts?.awards_title || 'RECOGNITION'} field="awards_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
                     </motion.h2>
 
                     <div className="border-t-4 border-[#09090b]">
@@ -463,7 +464,7 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                             initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: false }} variants={fadeUp}
                             className={`acid-heading font-extrabold uppercase tracking-tighter mb-12 text-4xl @md:text-[clamp(3rem,6cqi,5rem)] acid-text`}
                         >
-                            ENDORSEMENTS
+                            <EditableText value={theme?.customTexts?.testimonials_title || 'ENDORSEMENTS'} field="testimonials_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
                         </motion.h2>
 
                         <div className="grid grid-cols-1 @lg:grid-cols-2 gap-6 @md:gap-10">
@@ -507,9 +508,9 @@ export default function AcidTheme({ data, theme, isMobileView = false, isCardPre
                 initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerContainer}
                 className="pt-24 @md:pt-32 pb-12 px-6 @md:px-12 text-center bg-[#09090b]"
             >
-                <motion.p variants={fadeUp} className="acid-text font-bold uppercase tracking-[0.3em] mb-6 acid-body text-[10px] @md:text-xs">Drop a Line</motion.p>
+                <motion.p variants={fadeUp} className="acid-text font-bold uppercase tracking-[0.3em] mb-6 acid-body text-[10px] @md:text-xs"><EditableText value={theme?.customTexts?.cta_subtitle || 'Drop a Line'} field="cta_subtitle" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></motion.p>
                 <motion.a variants={fadeUp} href={`mailto:${userEmail}`} className={`block acid-heading font-extrabold uppercase tracking-tighter leading-[0.8] transition-colors duration-300 mb-16 @md:mb-20 hover:text-[var(--theme-color)]`} style={{ '--theme-color': themeColor } as any}>
-                    <span className={`block w-full break-words text-5xl @md:text-[clamp(5rem,15cqi,10rem)]`}>CONTACT</span>
+                    <span className={`block w-full break-words text-5xl @md:text-[clamp(5rem,15cqi,10rem)]`}><EditableText value={theme?.customTexts?.cta_title || 'CONTACT'} field="cta_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></span>
                 </motion.a>
 
                 <motion.div variants={fadeUp} className={`flex justify-between items-center border-t border-zinc-800 pt-8 font-bold uppercase tracking-widest text-zinc-500 acid-body flex-col gap-4 text-[9px] @md:flex-row @md:text-xs`}>

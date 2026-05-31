@@ -11,6 +11,7 @@ import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { EditableText } from '@/components/ui/EditableText';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -87,7 +88,8 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
         setTimeout(() => setIsCopied(false), 2000);
     };
 
-    const firstName = fullName.split(' ')[0];
+    const nameParts = fullName.split(' ');
+    const firstName = data?.profile?.firstName || data?.firstName || nameParts[0];
 
     // Animasi Muncul Berulang (Memicu Setiap Di-Scroll)
     const bentoAnim = {
@@ -179,13 +181,13 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                     {/* Identitas Atas */}
                     <div className="relative z-10 flex flex-col mt-2 @lg:mt-8">
                         <h1 className={`font-black tracking-tighter text-white uppercase text-[5rem] @md:text-[8rem] @lg:text-[10rem] leading-[0.8] mb-2`}>
-                            {firstName}
+                            <EditableText value={firstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
                         </h1>
                         <h2 className={`font-extrabold tracking-tight text-transparent bg-clip-text text-3xl @md:text-5xl @lg:text-6xl mb-6`} style={{ backgroundImage: `linear-gradient(to right, ${highlightColor}, #ffffff)` }}>
-                            {profession}
+                            <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={30} />
                         </h2>
                         <p className={`text-slate-400 font-medium leading-relaxed max-w-2xl text-base @lg:text-xl mt-4`}>
-                            {bio}
+                            <EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" maxLength={250} />
                         </p>
                     </div>
 
@@ -209,7 +211,7 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                             
                             {/* Layout Location & Time di mobile dibuat menyamping agar lebih rapi */}
                             <div className={`flex z-10 w-full flex-col items-center`}>
-                                <span className={`text-slate-500 font-bold uppercase tracking-widest text-[10px] mb-1`}>{location}</span>
+                                <span className={`text-slate-500 font-bold uppercase tracking-widest text-[10px] mb-1`}><EditableText value={location} field="location" entity="profile" isEditor={isEditor} as="span" maxLength={25} /></span>
                                 <span className={`font-bold text-white text-sm @md:text-base`}>{currentTime || "00:00"}</span>
                             </div>
                         </div>
@@ -233,7 +235,7 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                     initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0.1, margin: "-50px" }} variants={bentoAnim} 
                     className={`bento-card flex flex-col items-start justify-center p-8 group @lg:col-span-1 @lg:row-span-1`}
                 >
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2">Total Archive</span>
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2"><EditableText value={theme?.customTexts?.stats_archive || 'Total Archive'} field="stats_archive" entity="appearance" isEditor={isEditor} maxLength={20} as="span" /></span>
                     <h3 className="text-6xl font-black text-white group-hover:text-[var(--hl)] transition-colors">{archiveItems.length}</h3>
                 </motion.div>
 
@@ -257,8 +259,8 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                         className="bento-card bento-card-colored w-full h-full p-8 flex items-center justify-between group cursor-pointer"
                     >
                         <div className="flex flex-col">
-                            <span className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-70">Complete Portfolio</span>
-                            <h3 className="text-2xl @md:text-3xl font-black tracking-tight">View All Works</h3>
+                            <span className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-70"><EditableText value={theme?.customTexts?.cta_subtitle || 'Complete Portfolio'} field="cta_subtitle" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></span>
+                            <h3 className="text-2xl @md:text-3xl font-black tracking-tight"><EditableText value={theme?.customTexts?.cta_title || 'View All Works'} field="cta_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></h3>
                         </div>
                         <div className="w-14 h-14 rounded-full bg-black/10 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all duration-300">
                             <i className="fas fa-arrow-right -rotate-45 text-xl group-hover:rotate-0 transition-transform duration-300"></i>
@@ -272,8 +274,8 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                     className={`bento-card flex items-center p-6 @md:p-8 gap-6 overflow-hidden @lg:col-span-4 @lg:row-span-1 flex-row`}
                 >
                     <div className="shrink-0">
-                        <p className="text-slate-500 text-[10px] font-bold tracking-widest uppercase mb-1">Tech Stack</p>
-                        <h4 className="text-xl font-bold text-white whitespace-nowrap">My Arsenal</h4>
+                        <p className="text-slate-500 text-[10px] font-bold tracking-widest uppercase mb-1"><EditableText value={theme?.customTexts?.tech_subtitle || 'Tech Stack'} field="tech_subtitle" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></p>
+                        <h4 className="text-xl font-bold text-white whitespace-nowrap"><EditableText value={theme?.customTexts?.tech_title || 'My Arsenal'} field="tech_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></h4>
                     </div>
                     <div className="scroller w-full relative flex items-center">
                         <div className="scroller__inner">
@@ -341,9 +343,9 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                         <div className="flex flex-col @md:flex-row justify-between items-start @md:items-end mb-8 gap-4">
                             <div>
                                 <h3 className="text-xl @md:text-3xl font-black text-white tracking-tight flex items-center gap-3">
-                                    <i className="fas fa-cube text-[var(--hl)]"></i> 3D Models
+                                    <i className="fas fa-cube text-[var(--hl)]"></i> <EditableText value={theme?.customTexts?.models_title || '3D Models'} field="models_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
                                 </h3>
-                                <p className="custom-body text-sm text-slate-400 mt-2">Interactive spatial assets</p>
+                                <p className="custom-body text-sm text-slate-400 mt-2"><EditableText value={theme?.customTexts?.models_subtitle || 'Interactive spatial assets'} field="models_subtitle" entity="appearance" isEditor={isEditor} maxLength={30} as="span" /></p>
                             </div>
                             <span className={`text-[10px] font-bold tracking-widest uppercase text-[var(--hl)] bg-[#1a1a1d] px-4 py-2 ${radiusClass} border border-white/10`}>{items3D.length} Items</span>
                         </div>
@@ -399,7 +401,7 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                         className={`bento-card flex flex-col p-6 @lg:p-10 @lg:col-span-4 @lg:row-span-auto`}
                     >
                         <h3 className="text-xl @md:text-2xl font-black text-white mb-6 flex items-center gap-3">
-                            <i className="fas fa-award text-[var(--hl)]"></i> Honors & Awards
+                            <i className="fas fa-award text-[var(--hl)]"></i> <EditableText value={theme?.customTexts?.awards_title || 'Honors & Awards'} field="awards_title" entity="appearance" isEditor={isEditor} maxLength={30} as="span" />
                         </h3>
                         <div className={`grid gap-4 grid-cols-2 @lg:grid-cols-4`}>
                             {awardItems.slice(0, 4).map((award: any, i: number) => (
@@ -428,7 +430,7 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                         className={`bento-card flex flex-col p-6 @lg:p-10 @lg:col-span-4 @lg:row-span-auto`}
                     >
                         <h3 className="text-xl @md:text-2xl font-black text-white mb-6 flex items-center gap-3">
-                            <i className="fas fa-comment-dots text-[var(--hl)]"></i> Client Voices
+                            <i className="fas fa-comment-dots text-[var(--hl)]"></i> <EditableText value={theme?.customTexts?.testimonials_title || 'Client Voices'} field="testimonials_title" entity="appearance" isEditor={isEditor} maxLength={30} as="span" />
                         </h3>
                         <div className={`grid gap-4 grid-cols-1 @md:grid-cols-2 @lg:grid-cols-3`}>
                             {testimonials.map((t: any, i: number) => (
@@ -469,7 +471,7 @@ export default function BentoTheme({ data, theme, isMobileView = false, isCardPr
                     className={`bento-card flex flex-col @md:flex-row justify-between items-center gap-6 p-8 @lg:p-10 @lg:col-span-4 @lg:row-span-1`}
                 >
                     <div className="flex flex-col text-center @md:text-left">
-                        <h3 className="text-xl @md:text-2xl font-black text-white mb-1">Ready to build?</h3>
+                        <h3 className="text-xl @md:text-2xl font-black text-white mb-1"><EditableText value={theme?.customTexts?.footer_title || 'Ready to build?'} field="footer_title" entity="appearance" isEditor={isEditor} maxLength={30} as="span" /></h3>
                         <a href={`mailto:${userEmail}`} className="text-slate-400 hover:text-white transition-colors text-sm font-medium">
                             {userEmail}
                         </a>

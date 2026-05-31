@@ -11,6 +11,9 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
   const { firstName, lastName, profession, bio, isSaving, isFormValid, subdomain, subdomainStatus, session } = state;
   const { setFirstName, setLastName, setProfession, setBio, handleSave, setSubdomain } = actions;
   
+  const email = session?.user?.email || "user@example.com";
+  const defaultUsername = session?.user?.email?.split('@')[0] || "user";
+
   const [bioPrompt, setBioPrompt] = useState("");
   const [isGeneratingBio, setIsGeneratingBio] = useState(false);
 
@@ -38,11 +41,15 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
     }
   };
 
-  const email = session?.user?.email || "user@example.com";
-  const defaultUsername = session?.user?.email?.split('@')[0] || "user";
-
   // Deteksi login Google: Berdasarkan image provider Google atau ekstensi @gmail.com
   const isGoogleUser = session?.user?.provider === 'google' || session?.user?.image?.includes('googleusercontent.com') || session?.user?.email?.endsWith('@gmail.com');
+
+  // Fungsi untuk membersihkan teks dari emoji dan karakter aneh (HTML tags, dll)
+  const sanitizeText = (text: string) => {
+    return text
+      .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '')
+      .replace(/[<>]/g, '');
+  };
 
   const copyLink = () => {
     navigator.clipboard.writeText(`portfo.be/${subdomain}`);
@@ -63,7 +70,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             type="text" 
             maxLength={10} 
             value={firstName} 
-            onChange={(e) => setFirstName(e.target.value)} 
+            onChange={(e) => setFirstName(sanitizeText(e.target.value))} 
             placeholder="Sienna"
             className="w-1/2 px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 focus:bg-white focus:border-orange-500 focus:ring-[3px] focus:ring-orange-500/10 outline-none transition-all text-[13px] font-bold text-slate-900" 
           />
@@ -71,7 +78,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             type="text" 
             maxLength={10} 
             value={lastName} 
-            onChange={(e) => setLastName(e.target.value)} 
+            onChange={(e) => setLastName(sanitizeText(e.target.value))} 
             placeholder="Hewitt"
             className="w-1/2 px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 focus:bg-white focus:border-orange-500 focus:ring-[3px] focus:ring-orange-500/10 outline-none transition-all text-[13px] font-bold text-slate-900" 
           />
@@ -159,7 +166,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             type="text" 
             maxLength={20} 
             value={profession} 
-            onChange={(e) => setProfession(e.target.value)} 
+            onChange={(e) => setProfession(sanitizeText(e.target.value))} 
             placeholder="Contoh: UI/UX Designer"
             className="w-full px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 focus:bg-white focus:border-orange-500 focus:ring-[3px] focus:ring-orange-500/10 outline-none transition-all text-[13px] font-bold text-slate-900" 
           />
@@ -167,7 +174,7 @@ export function ProfileForm({ state, actions }: ProfileFormProps) {
             rows={4} 
             maxLength={250} 
             value={bio} 
-            onChange={(e) => setBio(e.target.value)} 
+            onChange={(e) => setBio(sanitizeText(e.target.value))} 
             placeholder="Tuliskan bio singkat Anda di sini..."
             className="w-full px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/50 focus:bg-white focus:border-orange-500 focus:ring-[3px] focus:ring-orange-500/10 outline-none transition-all text-[13px] font-medium leading-relaxed text-slate-900 resize-none" 
           />

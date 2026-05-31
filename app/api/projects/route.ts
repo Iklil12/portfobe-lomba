@@ -58,11 +58,27 @@ export async function POST(req: Request) {
     const user = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!user) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
 
+    // --- PLAN ENFORCEMENT: CEK KUOTA FREE ---
+    if (user.plan === 'FREE') {
+      const projectCount = await prisma.project.count({ where: { userId: user.id, deletedAt: null } });
+      if (projectCount >= 5) {
+        return NextResponse.json({ 
+          error: "Kuota FREE maksimal 5 proyek. Silakan upgrade ke PRO.",
+          code: "QUOTA_EXCEEDED"
+        }, { status: 403 });
+      }
+    }
+    // -----------------------------------------
+
     const body = await req.json();
     const { title, description, mediaUrl, projectType, tags } = body;
 
     if (!title || !mediaUrl) {
       return NextResponse.json({ error: "Judul dan Media wajib diisi" }, { status: 400 });
+    }
+
+    if (mediaUrl && !mediaUrl.startsWith("http://") && !mediaUrl.startsWith("https://")) {
+      return NextResponse.json({ error: "Format URL media tidak valid" }, { status: 400 });
     }
 
     const newProject = await prisma.project.create({
@@ -106,6 +122,10 @@ export async function PATCH(req: Request) {
 
     if (!id || !title || !mediaUrl) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
+    }
+
+    if (mediaUrl && !mediaUrl.startsWith("http://") && !mediaUrl.startsWith("https://")) {
+      return NextResponse.json({ error: "Format URL media tidak valid" }, { status: 400 });
     }
 
     const existingProject = await prisma.project.findUnique({ where: { id } });

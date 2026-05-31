@@ -11,6 +11,7 @@ import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { EditableText } from '@/components/ui/EditableText';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -52,8 +53,8 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
     const buttonShape = theme?.buttonShape || 'hard';
 
     const nameParts = fullName.split(' ');
-    const firstName = nameParts[0];
-    const lastName = nameParts.slice(1).join(' ');
+    const firstName = data?.profile?.firstName || data?.firstName || nameParts[0];
+    const lastName = data?.profile?.lastName || data?.lastName || nameParts.slice(1).join(' ');
 
     const getFontFamily = (fontName: string) => {
         if (!fontName) return "'Inter', sans-serif";
@@ -108,16 +109,16 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                     <div className="flex-1 w-full min-w-0">
                         <p className={`text-gray-400 font-bold uppercase tracking-[0.3em] mb-4 flex items-center gap-3 cine-body text-xs @md:text-sm`}>
                             <span className="w-2 h-2 rounded-full animate-pulse shrink-0" style={{ backgroundColor: themeColor }}></span>
-                            <span className="truncate">{profession}</span>
+                            <span className="truncate"><EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" className="cine-body" maxLength={20} /></span>
                         </p>
 
                         {/* PERBAIKAN: Penggunaan text-[clamp()] agar font membesar/mengecil bagai karet */}
                         <h1 className={`font-black leading-[0.85] tracking-tighter uppercase cine-heading break-words w-full
                       text-[clamp(4rem,10cqi,10rem)]
                   `}>
-                            {firstName}<br />
+                            <EditableText value={firstName} field="firstName" entity="profile" isEditor={isEditor} as="span" className="cine-heading" maxLength={10} /><br />
                             <span className="text-transparent break-words w-full block" style={{ WebkitTextStroke: `2px ${themeColor === '#000000' ? '#ffffff' : themeColor}` }}>
-                                {lastName || 'Portfolio'}
+                                <EditableText value={lastName || 'Portfolio'} field="lastName" entity="profile" isEditor={isEditor} as="span" className="cine-heading" maxLength={10} />
                             </span>
                         </h1>
                     </div>
@@ -125,7 +126,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                     {/* PERBAIKAN: Posisi bio diatur jadi rata kiri saat tablet, baru rata kanan saat layar sangat besar */}
                     <div className={`cine-body w-full @lg:max-w-sm text-left @lg:text-right pb-4 @lg:pb-6 shrink-0`}>
                         <p className={`cine-body text-gray-400 leading-relaxed text-sm @md:text-base mt-6 @lg:mt-0`}>
-                            {bio}
+                            <EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" className="cine-body" maxLength={250} />
                         </p>
                         <div className={`mt-6 flex flex-wrap gap-4 justify-start @lg:justify-end`}>
                             {links.map((l: any, i: number) => (
@@ -153,11 +154,11 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                 <div className={`grid divide-[#1f1f1f] grid-cols-2 @md:grid-cols-4 divide-x divide-y @md:divide-y-0`}>
                     <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 p-8 @md:p-16`}>
                         <span className={`font-black mb-1 tracking-tighter cine-heading text-4xl @md:text-7xl`}>{archiveItems.length}</span>
-                        <span className="text-[9px] @md:text-xs uppercase tracking-widest font-bold cine-body">Projects</span>
+                        <EditableText value={theme?.customTexts?.stats_projects || 'Projects'} field="stats_projects" entity="appearance" isEditor={isEditor} maxLength={15} as="span" className="text-[9px] @md:text-xs uppercase tracking-widest font-bold cine-body" />
                     </div>
                     <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 p-8 @md:p-16`}>
                         <span className={`font-black mb-1 tracking-tighter cine-heading text-4xl @md:text-7xl`}>{awardItems.length}</span>
-                        <span className="text-[9px] @md:text-xs uppercase tracking-widest font-bold cine-body">Awards</span>
+                        <EditableText value={theme?.customTexts?.stats_awards || 'Awards'} field="stats_awards" entity="appearance" isEditor={isEditor} maxLength={15} as="span" className="text-[9px] @md:text-xs uppercase tracking-widest font-bold cine-body" />
                     </div>
                     <div className={`flex flex-col items-center justify-center text-center hover:bg-white hover:text-black transition duration-300 p-8 @md:p-16`}>
                         <span className={`font-black mb-1 tracking-tighter cine-heading text-4xl @md:text-7xl`}>{links.length}</span>
@@ -173,7 +174,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
             {/* PROJECTS SECTION */}
             <section className={`py-20 @md:py-24 px-6 @md:px-12`} id="work">
                 <div className="flex justify-between items-end mb-12">
-                    <h2 className={`font-black uppercase tracking-tighter cine-heading text-[clamp(2.5rem,8cqi,5rem)]`}>Selected<br />Works <span className="text-gray-600 text-xl @md:text-2xl">({archiveItems.length})</span></h2>
+                    <h2 className={`font-black uppercase tracking-tighter cine-heading text-[clamp(2.5rem,8cqi,5rem)]`}><EditableText value={theme?.customTexts?.projects_title || 'Selected Works'} field="projects_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /> <span className="text-gray-600 text-xl @md:text-2xl">({archiveItems.length})</span></h2>
                 </div>
 
                 <div className="flex flex-col border-t border-[#1f1f1f]">
@@ -241,10 +242,10 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                         <div className={`relative z-10 flex items-center justify-between py-10 @md:py-14 px-2 @md:px-8`}>
                             <div className="flex flex-col">
                                 <span className={`font-mono text-gray-500 uppercase tracking-[0.3em] group-hover:text-gray-300 transition-colors duration-500 text-[9px] @md:text-xs mb-3`}>
-                                    <i className="fas fa-film mr-2"></i>Full Index
+                                    <i className="fas fa-film mr-2"></i><EditableText value={theme?.customTexts?.projects_subtitle || 'Full Index'} field="projects_subtitle" entity="appearance" isEditor={isEditor} maxLength={20} as="span" />
                                 </span>
                                 <h3 className={`font-black uppercase tracking-tighter text-gray-300 group-hover:text-white transition-colors duration-500 cine-heading flex items-center gap-4 text-3xl @md:text-6xl`}>
-                                    Explore Archive
+                                    <EditableText value={theme?.customTexts?.explore_archive || 'Explore Archive'} field="explore_archive" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
                                 </h3>
                             </div>
 
@@ -265,7 +266,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
             {items3D.length > 0 && (
                 <section className="border-b border-[#1f1f1f] bg-[#050505] py-20 @md:py-24 px-6 @md:px-12">
                     <div className="flex justify-between items-end mb-12">
-                        <h2 className={`font-black uppercase tracking-tighter cine-heading text-[clamp(2.5rem,8cqi,5rem)]`}>3D<br />Models <span className="text-gray-600 text-xl @md:text-2xl">({items3D.length})</span></h2>
+                        <h2 className={`font-black uppercase tracking-tighter cine-heading text-[clamp(2.5rem,8cqi,5rem)]`}><EditableText value={theme?.customTexts?.models_title || '3D Models'} field="models_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /> <span className="text-gray-600 text-xl @md:text-2xl">({items3D.length})</span></h2>
                     </div>
 
                     <div className="flex flex-col gap-12 @md:gap-24">
@@ -307,7 +308,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
                 <div className={`grid gap-10 @md:grid-cols-12 @md:gap-12`}>
                     <div className={`@md:col-span-4`}>
                         <div className="@md:sticky @md:top-24">
-                            <h2 className={`font-black uppercase tracking-tighter mb-3 cine-heading text-3xl @md:text-5xl`}>Recognition</h2>
+                            <h2 className={`font-black uppercase tracking-tighter mb-3 cine-heading text-3xl @md:text-5xl`}><EditableText value={theme?.customTexts?.awards_title || 'Recognition'} field="awards_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></h2>
                             <p className={`text-gray-500 max-w-xs cine-body text-sm`}>Acknowledged by the industry for exceptional visual storytelling.</p>
                         </div>
                     </div>
@@ -356,7 +357,7 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
             {testimonials.length > 0 && (
                 <section className="bg-[#050505] border-t border-[#1f1f1f] py-20 @md:py-24 px-6 @md:px-12">
                     <div className="flex justify-between items-end mb-12">
-                        <h2 className={`font-black uppercase tracking-tighter cine-heading text-[clamp(2.5rem,8cqi,5rem)]`}>Client<br />Reviews <span className="text-gray-600 text-xl @md:text-2xl">({testimonials.length})</span></h2>
+                        <h2 className={`font-black uppercase tracking-tighter cine-heading text-[clamp(2.5rem,8cqi,5rem)]`}><EditableText value={theme?.customTexts?.testimonials_title || 'Client Reviews'} field="testimonials_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /> <span className="text-gray-600 text-xl @md:text-2xl">({testimonials.length})</span></h2>
                     </div>
 
                     <div className="grid grid-cols-1 @md:grid-cols-2 gap-8 @md:gap-12">
@@ -394,9 +395,9 @@ export default function CinematicTheme({ data, theme, isMobileView = false, isCa
             {/* FOOTER CTA */}
             <footer className={`bg-white text-black text-center relative overflow-hidden group py-24 @md:py-32 px-6 @md:px-12`}>
                 <a href={`mailto:${userEmail}`} className="relative z-10 block cursor-pointer">
-                    <p className={`font-bold uppercase tracking-[0.3em] text-gray-500 mb-4 group-hover:text-black transition cine-body text-xs @md:text-sm`}>Got a project?</p>
+                    <p className={`font-bold uppercase tracking-[0.3em] text-gray-500 mb-4 group-hover:text-black transition cine-body text-xs @md:text-sm`}><EditableText value={theme?.customTexts?.cta_subtitle || 'Got a project?'} field="cta_subtitle" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></p>
                     <h2 className={`font-black uppercase tracking-tighter leading-none group-hover:-translate-y-2 transition-transform duration-500 cine-heading text-[clamp(3rem,10cqi,8rem)]`}>
-                        Let's Talk
+                        <EditableText value={theme?.customTexts?.cta_title || "Let's Talk"} field="cta_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" />
                     </h2>
                 </a>
 

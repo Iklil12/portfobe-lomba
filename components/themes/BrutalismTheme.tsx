@@ -13,6 +13,7 @@ import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
 import { TestimonialSection } from '@/components/features/testimonials/TestimonialSection';
+import { EditableText } from '@/components/ui/EditableText';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -32,6 +33,9 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
   const fontBody = theme?.fontBody || "Space Mono"; // Brutalism sering menggunakan Mono untuk body juga
 
   const fullName = data?.profile?.fullName || data?.fullName || "JOHN DOE";
+  const nameParts = fullName.split(' ');
+  const firstName = data?.profile?.firstName || data?.firstName || nameParts[0];
+  const lastName = data?.profile?.lastName || data?.lastName || nameParts.slice(1).join(' ');
   const profession = data?.profile?.profession || data?.profession || "SYSTEM ARCHITECT";
   const bio = data?.profile?.bio || data?.bio || "Executing raw logic into brutal visual experiences. Unapologetic design systems.";
   const subdomain = data?.profile?.subdomain || data?.subdomain || "username";
@@ -174,7 +178,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
           <div className="flex justify-between items-stretch">
             <div className={`flex-1 border-r-[3px] border-black flex items-center bg-white ${'p-4 @sm:p-6'}`}>
               <h2 className={"custom-heading text-lg @sm:text-2xl font-black uppercase tracking-tighter leading-none"}>
-                {fullName.split(' ')[0]} <br /> {fullName.split(' ').slice(1).join(' ')}
+                <EditableText value={firstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} /> <br /> <EditableText value={lastName} field="lastName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
               </h2>
             </div>
 
@@ -238,7 +242,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
             </motion.div>
             <div className="p-6 bg-[var(--hl)] text-black font-mono flex-1">
               <motion.p variants={slideInHard} className={"text-xl @sm:text-2xl font-black uppercase leading-tight custom-heading"}>
-                {profession}
+                <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={30} />
               </motion.p>
             </div>
           </div>
@@ -251,8 +255,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
             </motion.div>
 
             <motion.h1 variants={starkReveal} className={"custom-heading text-sm @sm:text-lg @md:text-[1.1cqi] font-bold uppercase leading-normal tracking-tight mb-8 break-words text-left"}>
-              {/* Memecah bio menjadi teks raksasa */}
-              {bio}
+              <EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" maxLength={250} />
             </motion.h1>
 
             <motion.div variants={starkReveal} className="flex flex-wrap gap-4">
@@ -273,11 +276,11 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
           className={`w-full grid grid-cols-2 border-b-[3px] border-black font-mono uppercase bg-black text-white divide-x-[3px] divide-black`}
         >
           <div className={"p-3 @sm:p-6 flex flex-col @sm:flex-row justify-between items-center bg-white text-black brutal-hover-invert transition-none text-center @sm:text-left"}>
-            <span className={"text-[10px] @sm:text-xs font-bold"}>PROJECTS</span>
+            <span className={"text-[10px] @sm:text-xs font-bold"}><EditableText value={theme?.customTexts?.stats_projects || 'PROJECTS'} field="stats_projects" entity="appearance" isEditor={isEditor} maxLength={15} as="span" /></span>
             <span className={"text-xl @sm:text-4xl font-black custom-heading"}>{archiveItems.length}</span>
           </div>
           <div className={"p-3 @sm:p-6 flex flex-col @sm:flex-row justify-between items-center bg-[var(--hl)] text-black brutal-hover-invert transition-none text-center @sm:text-left"}>
-            <span className={"text-[10px] @sm:text-xs font-bold"}>AWARDS</span>
+            <span className={"text-[10px] @sm:text-xs font-bold"}><EditableText value={theme?.customTexts?.stats_awards || 'AWARDS'} field="stats_awards" entity="appearance" isEditor={isEditor} maxLength={15} as="span" /></span>
             <span className={"text-xl @sm:text-4xl font-black custom-heading"}>{awardItems.length}</span>
           </div>
         </motion.div>
@@ -286,7 +289,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
         <section id="work" className="w-full flex flex-col border-b-[3px] border-black bg-[#f4f4f0]">
           {/* PERUBAHAN: once: false agar di-trigger ulang saat scroll */}
           <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal} className={"p-6 border-b-[3px] border-black bg-white"}>
-            <h2 className={"custom-heading text-4xl @sm:text-5xl font-black uppercase tracking-tighter"}>INDEX_OF_WORK</h2>
+            <h2 className={"custom-heading text-4xl @sm:text-5xl font-black uppercase tracking-tighter"}><EditableText value={theme?.customTexts?.projects_title || 'INDEX_OF_WORK'} field="projects_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></h2>
           </motion.div>
 
           <motion.div
@@ -353,7 +356,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
           <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal} className={"p-6 @sm:p-12 flex justify-center bg-white border-t-[3px] border-black"}>
             <Link href={`/${subdomain}/gallery`} scroll={false}>
               <button className={`bg-[var(--hl)] text-black border-[3px] border-black font-mono font-black uppercase px-8 @sm:px-16 py-4 @sm:py-6 text-sm @sm:text-lg ${hardShadow} ${hardShadowHover} ${radiusClass}`}>
-                ACCESS FULL DATABASE
+                <EditableText value={theme?.customTexts?.explore_archive || 'ACCESS FULL DATABASE'} field="explore_archive" entity="appearance" isEditor={isEditor} maxLength={30} as="span" />
               </button>
             </Link>
           </motion.div>
@@ -363,7 +366,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
         {items3D.length > 0 && (
           <section className="w-full flex flex-col border-b-[3px] border-black bg-[#f4f4f0]">
             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal} className={"p-6 border-b-[3px] border-black bg-white"}>
-              <h2 className={"custom-heading text-4xl @sm:text-5xl font-black uppercase tracking-tighter"}>3D_MODELS</h2>
+              <h2 className={"custom-heading text-4xl @sm:text-5xl font-black uppercase tracking-tighter"}><EditableText value={theme?.customTexts?.models_title || '3D_MODELS'} field="models_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></h2>
             </motion.div>
             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={staggerContainer} className="flex flex-col">
               {items3D.map((p: any, i: number) => {
@@ -409,7 +412,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
           <section id="awards" className="w-full bg-white border-b-[3px] border-black">
             {/* PERUBAHAN: once: false agar di-trigger ulang saat scroll */}
             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal} className="p-6 border-b-[3px] border-black bg-black text-white">
-              <h2 className={"custom-heading text-4xl @sm:text-5xl font-black uppercase tracking-tighter"}>VERIFIED_RECORDS</h2>
+              <h2 className={"custom-heading text-4xl @sm:text-5xl font-black uppercase tracking-tighter"}><EditableText value={theme?.customTexts?.awards_title || 'VERIFIED_RECORDS'} field="awards_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></h2>
             </motion.div>
 
             <motion.div
@@ -470,7 +473,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
         {testimonials.length > 0 && (
           <section className="w-full bg-white border-b-[3px] border-black">
             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal} className="p-6 border-b-[3px] border-black bg-[var(--hl)] text-black">
-              <h2 className={"custom-heading text-4xl @sm:text-5xl font-black uppercase tracking-tighter"}>CLIENT_RECORDS</h2>
+              <h2 className={"custom-heading text-4xl @sm:text-5xl font-black uppercase tracking-tighter"}><EditableText value={theme?.customTexts?.testimonials_title || 'CLIENT_RECORDS'} field="testimonials_title" entity="appearance" isEditor={isEditor} maxLength={25} as="span" /></h2>
             </motion.div>
             <div className="p-8 @lg:p-12">
               <TestimonialSection testimonials={testimonials} variant="grid" />
@@ -483,7 +486,7 @@ export default function BrutalismTheme({ data, theme, isMobileView = false, isCa
         <motion.footer initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={starkReveal} className="w-full flex flex-col">
           <div className={"p-12 @sm:p-20 flex flex-col items-center justify-center text-center border-b-[3px] border-black bg-[var(--hl)]"}>
             <h2 className={"custom-heading text-5xl @sm:text-7xl @md:text-[8cqi] font-black uppercase tracking-tighter leading-[0.8] mb-8"}>
-              END OF <br /> TRANSMISSION
+              <EditableText value={theme?.customTexts?.cta_title || 'END OF TRANSMISSION'} field="cta_title" entity="appearance" isEditor={isEditor} maxLength={30} as="span" />
             </h2>
             <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={`bg-black text-white font-mono font-bold uppercase px-8 py-4 text-xs @sm:text-sm border-[3px] border-black ${hardShadow} ${hardShadowHover} ${radiusClass}`}>
               RETURN TO TOP ^

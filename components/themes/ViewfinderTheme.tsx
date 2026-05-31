@@ -11,6 +11,7 @@ import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { EditableText } from '@/components/ui/EditableText';
 
 export default function ViewfinderTheme({ data, theme, isMobileView, isCardPreview = false, isEditor = false }: any) {
     const animationTrigger = (isCardPreview || isEditor) ? "animate" : "whileInView";
@@ -192,13 +193,13 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                     <div className="flex flex-col gap-0.5">
                         <span className="flex items-center gap-1.5">
                             <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--primary)', mixBlendMode: 'normal' }}></span>
-                            REC
+                            <EditableText value={theme?.customTexts?.vf_hud_rec || 'REC'} field="vf_hud_rec" entity="appearance" isEditor={isEditor} as="span" maxLength={10} />
                         </span>
-                        <span>TC {timecode}</span>
+                        <span><EditableText value={theme?.customTexts?.vf_hud_tc || 'TC'} field="vf_hud_tc" entity="appearance" isEditor={isEditor} as="span" maxLength={5} /> {timecode}</span>
                     </div>
                     <div className="flex flex-col items-end gap-0.5">
                         <span className={`border border-current px-1.5 py-0.5 ${radiusClass} text-[9px]`}>100% 🔋</span>
-                        <span>ISO 800 | 24FPS</span>
+                        <span><EditableText value={theme?.customTexts?.vf_hud_iso || 'ISO 800 | 24FPS'} field="vf_hud_iso" entity="appearance" isEditor={isEditor} as="span" maxLength={25} /></span>
                     </div>
                 </motion.div>
 
@@ -225,13 +226,13 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                     className="flex justify-between items-end vf-hud-text font-bold tracking-widest text-white"
                 >
                     <div className="leading-snug">
-                        <span>DIR. {fullName.toUpperCase()}</span>
-                        <br />{location.toUpperCase()}
+                        <span><EditableText value={theme?.customTexts?.vf_dir || 'DIR.'} field="vf_dir" entity="appearance" isEditor={isEditor} as="span" maxLength={10} /> <EditableText value={fullName.toUpperCase()} field="fullName" entity="profile" isEditor={isEditor} as="span" maxLength={30} /></span>
+                        <br /><EditableText value={location.toUpperCase()} field="location" entity="profile" isEditor={isEditor} as="span" maxLength={30} />
                     </div>
                     <div className="text-right pointer-events-auto flex flex-col gap-0.5" style={{ mixBlendMode: 'normal' }}>
-                        <a href="#reel" className="hover:opacity-70 transition">/ REEL</a>
-                        <a href="#log" className="hover:opacity-70 transition">/ LOG</a>
-                        <a href={`mailto:${email}`} className="hover:opacity-70 transition">/ CONTACT</a>
+                        <a href="#reel" className="hover:opacity-70 transition">/ <EditableText value={theme?.customTexts?.vf_nav_reel || 'REEL'} field="vf_nav_reel" entity="appearance" isEditor={isEditor} as="span" maxLength={15} /></a>
+                        <a href="#log" className="hover:opacity-70 transition">/ <EditableText value={theme?.customTexts?.vf_nav_log || 'LOG'} field="vf_nav_log" entity="appearance" isEditor={isEditor} as="span" maxLength={15} /></a>
+                        <a href={`mailto:${email}`} className="hover:opacity-70 transition">/ <EditableText value={theme?.customTexts?.vf_nav_contact || 'CONTACT'} field="vf_nav_contact" entity="appearance" isEditor={isEditor} as="span" maxLength={15} /></a>
                     </div>
                 </motion.div>
             </div>
@@ -267,7 +268,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                 }}
                                 className="text-gray-400 mb-3 uppercase vf-hero-sub"
                             >
-                                {profession}
+                                <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={40} />
                             </motion.p>
 
                             <motion.h1
@@ -278,7 +279,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                 }}
                                 className="font-cinema leading-none tracking-wider text-[#F3F3F1] vf-hero-title"
                             >
-                                {firstName}<br />{lastName}
+                                <EditableText value={firstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={20} /><br /><EditableText value={lastName} field="lastName" entity="profile" isEditor={isEditor} as="span" maxLength={20} />
                             </motion.h1>
 
                             <motion.p
@@ -288,7 +289,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                 }}
                                 className="text-gray-400 max-w-md mx-auto leading-relaxed mt-5 vf-hero-sub vf-body"
                             >
-                                "{bio}"
+                                "<EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" maxLength={250} />"
                             </motion.p>
 
                             <motion.div
@@ -321,7 +322,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                         variants={fadeUpVariants}
                         className="vf-reel-header pointer-events-auto"
                     >
-                        <h2 className="font-cinema tracking-wide text-[#F3F3F1] vf-section-title">THE REEL <span style={{ color: 'var(--primary)' }}>.</span></h2>
+                        <h2 className="font-cinema tracking-wide text-[#F3F3F1] vf-section-title"><EditableText value={theme?.customTexts?.vf_reel_title || 'THE REEL'} field="vf_reel_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} /> <span style={{ color: 'var(--primary)' }}>.</span></h2>
                         <div className="vf-button-group">
                             <div className="vf-nav-btns">
                                 <motion.button
@@ -330,7 +331,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                     onClick={scrollLeft}
                                     className="vf-nav-btn text-[10px] @sm:text-sm border border-white/20 px-4 @sm:px-6 py-2 transition-colors uppercase tracking-[0.1em] @sm:tracking-[0.2em] font-bold bg-transparent text-white"
                                 >
-                                    <i className="fas fa-chevron-left mr-2"></i> PREV
+                                    <i className="fas fa-chevron-left mr-2"></i> <EditableText value={theme?.customTexts?.vf_btn_prev || 'PREV'} field="vf_btn_prev" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
                                 </motion.button>
                                 <motion.button
                                     whileHover={{ x: 8, backgroundColor: "#F3F3F1", color: "#050505" }}
@@ -338,7 +339,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                     onClick={scrollRight}
                                     className="vf-nav-btn text-[10px] @sm:text-sm border border-white/20 px-4 @sm:px-6 py-2 transition-colors uppercase tracking-[0.1em] @sm:tracking-[0.2em] font-bold bg-transparent text-white"
                                 >
-                                    NEXT <i className="fas fa-chevron-right ml-2"></i>
+                                    <EditableText value={theme?.customTexts?.vf_btn_next || 'NEXT'} field="vf_btn_next" entity="appearance" isEditor={isEditor} as="span" maxLength={15} /> <i className="fas fa-chevron-right ml-2"></i>
                                 </motion.button>
                             </div>
                         </div>
@@ -409,7 +410,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                 initial="initial"
                                 className="group flex items-center gap-3 px-8 py-3 border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-black transition-all duration-300 cursor-pointer uppercase font-black tracking-[0.3em] text-[10px] @sm:text-xs"
                             >
-                                <span>EXPLORE ALL</span>
+                                <span><EditableText value={theme?.customTexts?.vf_btn_explore || 'EXPLORE ALL'} field="vf_btn_explore" entity="appearance" isEditor={isEditor} as="span" maxLength={25} /></span>
                                 <motion.i
                                     variants={{
                                         initial: { x: 0, y: 0 },
@@ -430,7 +431,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                             variants={fadeUpVariants}
                             className="vf-reel-header pointer-events-auto"
                         >
-                            <h2 className="font-cinema tracking-wide text-[#F3F3F1] vf-section-title">3D MODELS <span style={{ color: 'var(--primary)' }}>.</span></h2>
+                            <h2 className="font-cinema tracking-wide text-[#F3F3F1] vf-section-title"><EditableText value={theme?.customTexts?.vf_3d_title || '3D MODELS'} field="vf_3d_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} /> <span style={{ color: 'var(--primary)' }}>.</span></h2>
                         </motion.div>
                         <div className="flex flex-col gap-16 @md:gap-32 px-6 @md:px-12 pb-20">
                             {items3D.map((p: any, idx: number) => {
@@ -449,7 +450,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                             <div className="absolute top-8 left-8 flex flex-col gap-2 pointer-events-none z-20">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></div>
-                                                    <span className="font-cinema text-[10px] tracking-[0.4em] text-white opacity-40 uppercase">Rendering Asset_{idx+1}</span>
+                                                    <span className="font-cinema text-[10px] tracking-[0.4em] text-white opacity-40 uppercase"><EditableText value={theme?.customTexts?.vf_3d_rendering || 'Rendering Asset_'} field="vf_3d_rendering" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />{idx+1}</span>
                                                 </div>
                                             </div>
                                             <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/10 transition-colors duration-700 pointer-events-none"></div>
@@ -462,7 +463,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                                 {p.description && <p className="vf-hud-text text-sm @md:text-base opacity-40 max-w-xl mt-4 leading-relaxed uppercase tracking-widest">{p.description}</p>}
                                             </div>
                                             <div className="flex flex-col items-end gap-1 shrink-0">
-                                                <p className="uppercase tracking-[0.5em] vf-hud-text text-[10px] opacity-60" style={{ color: 'var(--primary)' }}>Cine_Asset_Metadata</p>
+                                                <p className="uppercase tracking-[0.5em] vf-hud-text text-[10px] opacity-60" style={{ color: 'var(--primary)' }}><EditableText value={theme?.customTexts?.vf_3d_metadata || 'Cine_Asset_Metadata'} field="vf_3d_metadata" entity="appearance" isEditor={isEditor} as="span" maxLength={30} /></p>
                                                 <div className="h-px w-24 bg-[var(--primary)] opacity-20 mt-1"></div>
                                             </div>
                                         </div>
@@ -481,8 +482,8 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                             variants={fadeUpVariants}
                             className="border-b-2 border-[#050505] pb-3 mb-6 flex justify-between items-end"
                         >
-                            <h2 className="font-cinema tracking-wide vf-section-title">PRODUCTION LOG</h2>
-                            <span className="font-bold uppercase tracking-widest vf-hud-text">FILE_NO: 0042</span>
+                            <h2 className="font-cinema tracking-wide vf-section-title"><EditableText value={theme?.customTexts?.vf_log_title || 'PRODUCTION LOG'} field="vf_log_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} /></h2>
+                            <span className="font-bold uppercase tracking-widest vf-hud-text"><EditableText value={theme?.customTexts?.vf_log_file || 'FILE_NO: 0042'} field="vf_log_file" entity="appearance" isEditor={isEditor} as="span" maxLength={30} /></span>
                         </motion.div>
 
                         <motion.div
@@ -494,13 +495,15 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                             className="grid grid-cols-2 gap-4 mb-10"
                         >
                             {[
-                                { label: "ACTIVE YEARS", val: "08+" },
-                                { label: "PROJECTS WRAPPED", val: totalProjects },
-                                { label: "HONORS", val: totalHonors },
-                                { label: "BASE OF OPS", val: location.split(',')[0].substring(0, 3).toUpperCase() }
+                                { label: theme?.customTexts?.vf_stat_1 || "ACTIVE YEARS", val: "08+", field: 'vf_stat_1' },
+                                { label: theme?.customTexts?.vf_stat_2 || "PROJECTS WRAPPED", val: totalProjects, field: 'vf_stat_2' },
+                                { label: theme?.customTexts?.vf_stat_3 || "HONORS", val: totalHonors, field: 'vf_stat_3' },
+                                { label: theme?.customTexts?.vf_stat_4 || "BASE OF OPS", val: location.split(',')[0].substring(0, 3).toUpperCase(), field: 'vf_stat_4' }
                             ].map((stat, idx) => (
                                 <motion.div key={idx} variants={fadeUpVariants}>
-                                    <p className="font-bold uppercase tracking-widest mb-1 text-gray-500 vf-log-stat-label">{stat.label}</p>
+                                    <p className="font-bold uppercase tracking-widest mb-1 text-gray-500 vf-log-stat-label">
+                                        <EditableText value={stat.label} field={stat.field} entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                                    </p>
                                     <p className="font-cinema vf-log-stat-value">{stat.val}</p>
                                 </motion.div>
                             ))}
@@ -524,7 +527,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                     initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUpVariants}
                                     className="text-[10px] font-bold uppercase tracking-widest mb-4 bg-[#050505] text-[#F3F3F1] inline-block px-3 py-1"
                                 >
-                                    CLIENT REVIEWS
+                                    <EditableText value={theme?.customTexts?.vf_reviews_title || 'CLIENT REVIEWS'} field="vf_reviews_title" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                                 </motion.h3>
                                 <div className="grid grid-cols-1 @md:grid-cols-2 gap-4">
                                     {testimonials.map((t: any, i: number) => (
@@ -566,7 +569,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                             initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUpVariants}
                             className="text-[10px] font-bold uppercase tracking-widest mb-3 bg-[#050505] text-[#F3F3F1] inline-block px-3 py-1"
                         >
-                            FESTIVALS & RECOGNITION
+                            <EditableText value={theme?.customTexts?.vf_festivals_title || 'FESTIVALS & RECOGNITION'} field="vf_festivals_title" entity="appearance" isEditor={isEditor} as="span" maxLength={40} />
                         </motion.h3>
 
                         <div className="border-y-2 border-[#050505]">
@@ -612,7 +615,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                                         </p>
                                                         {cert.url && (
                                                             <a href={cert.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest border border-black/20 px-4 py-2 hover:bg-black hover:text-white transition-all">
-                                                                Verify Award <i className="fas fa-external-link-alt text-[8px]"></i>
+                                                                <EditableText value={theme?.customTexts?.vf_cert_verify || 'Verify Award'} field="vf_cert_verify" entity="appearance" isEditor={isEditor} as="span" maxLength={30} /> <i className="fas fa-external-link-alt text-[8px]"></i>
                                                             </a>
                                                         )}
                                                     </div>
@@ -638,13 +641,13 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                     variants={fadeUpVariants}
                     className="relative z-20 py-24 bg-[#050505] text-center border-t border-white/5"
                 >
-                    <p className="vf-hud-text vf-body uppercase tracking-[0.3em] font-bold mb-4" style={{ color: 'var(--primary)' }}>Cut. That's a wrap.</p>
+                    <p className="vf-hud-text vf-body uppercase tracking-[0.3em] font-bold mb-4" style={{ color: 'var(--primary)' }}><EditableText value={theme?.customTexts?.vf_footer_wrap || "Cut. That's a wrap."} field="vf_footer_wrap" entity="appearance" isEditor={isEditor} as="span" maxLength={40} /></p>
                     <motion.h2
                         whileHover={{ scale: 1.05 }}
                         className="font-cinema text-[#F3F3F1] hover:text-[var(--primary)] transition-colors cursor-pointer mb-10 vf-footer-title leading-tight inline-block"
                     >
                         <a href={`mailto:${email}`}>
-                            DIRECT<br />DIRECTIVE ↗<br />
+                            <EditableText value={theme?.customTexts?.vf_footer_d1 || 'DIRECT'} field="vf_footer_d1" entity="appearance" isEditor={isEditor} as="span" maxLength={15} /><br /><EditableText value={theme?.customTexts?.vf_footer_d2 || 'DIRECTIVE ↗'} field="vf_footer_d2" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /><br />
                         </a>
                     </motion.h2>
                     <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-[10px] text-gray-600 uppercase tracking-widest vf-body">
@@ -700,18 +703,18 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                                         <div className="flex flex-col gap-1">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></div>
-                                                <span>PLAYBACK</span>
+                                                <span><EditableText value={theme?.customTexts?.vf_modal_play || 'PLAYBACK'} field="vf_modal_play" entity="appearance" isEditor={isEditor} as="span" maxLength={15} /></span>
                                             </div>
-                                            <span>TC 00:00:00:00</span>
+                                            <span><EditableText value={theme?.customTexts?.vf_modal_tc || 'TC 00:00:00:00'} field="vf_modal_tc" entity="appearance" isEditor={isEditor} as="span" maxLength={25} /></span>
                                         </div>
                                         <div className="text-right">
-                                            <span>4K RAW | 24FPS</span>
-                                            <br /><span>LOG-C3</span>
+                                            <span><EditableText value={theme?.customTexts?.vf_modal_top_r1 || '4K RAW | 24FPS'} field="vf_modal_top_r1" entity="appearance" isEditor={isEditor} as="span" maxLength={30} /></span>
+                                            <br /><span><EditableText value={theme?.customTexts?.vf_modal_top_r2 || 'LOG-C3'} field="vf_modal_top_r2" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /></span>
                                         </div>
                                     </div>
                                     <div className="flex justify-between items-end vf-hud-text font-bold">
-                                        <span>CH1 [||||||||--]</span>
-                                        <span>BAT 88%</span>
+                                        <span><EditableText value={theme?.customTexts?.vf_modal_bot_l || 'CH1 [||||||||--]'} field="vf_modal_bot_l" entity="appearance" isEditor={isEditor} as="span" maxLength={30} /></span>
+                                        <span><EditableText value={theme?.customTexts?.vf_modal_bot_r || 'BAT 88%'} field="vf_modal_bot_r" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /></span>
                                     </div>
                                 </div>
 
@@ -727,7 +730,7 @@ export default function ViewfinderTheme({ data, theme, isMobileView, isCardPrevi
                             {/* Footer Status */}
                             <div className="bg-[#111] py-2.5 px-4 @md:px-6 flex justify-between items-center border-t border-white/10">
                                 <span className="font-cinema tracking-widest text-[12px] text-white/40">{selectedMedia.title.toUpperCase()}</span>
-                                <button onClick={() => setSelectedMedia(null)} className="vf-hud-text font-bold text-[var(--primary)] hover:opacity-70 transition">/ EXIT_VIEW</button>
+                                <button onClick={() => setSelectedMedia(null)} className="vf-hud-text font-bold text-[var(--primary)] hover:opacity-70 transition">/ <EditableText value={theme?.customTexts?.vf_modal_exit || 'EXIT_VIEW'} field="vf_modal_exit" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /></button>
                             </div>
                         </motion.div>
                     </motion.div>

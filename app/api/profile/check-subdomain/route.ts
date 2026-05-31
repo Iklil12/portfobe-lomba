@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { isForbiddenUsername } from "@/lib/constants/reserved-usernames";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function GET(req: Request) {
   try {
+    // Rate limit: maks 10 cek per menit untuk mencegah enumerasi subdomain
+    const rateLimitResponse = await checkRateLimit(10, 60000);
+    if (rateLimitResponse) return rateLimitResponse;
     const { searchParams } = new URL(req.url);
     const subdomain = searchParams.get('subdomain');
 

@@ -10,7 +10,7 @@ import { Resend } from 'resend';
 import GithubProvider from "next-auth/providers/github";
 
 // Inisialisasi Resend
-const resend = new Resend(process.env.RESEND_API_KEY || "re_dummy_key_buat_build_doang");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 declare module "next-auth" {
   interface Session {
@@ -18,6 +18,7 @@ declare module "next-auth" {
       id: string;
       name: string;
       email: string;
+      plan: string;
       profession: string;
       bio: string;
       avatar: string;
@@ -78,6 +79,7 @@ export const authOptions: NextAuthOptions = {
                 email: userData.email,
                 image: targetUser.profile?.avatarUrl || userData.avatar || userData.image,
                 avatar: userData.avatar,
+                plan: userData.plan,
                 profession: targetUser.profile?.profession,
                 bio: targetUser.profile?.bio,
                 subdomain: targetUser.profile?.subdomain,
@@ -166,6 +168,7 @@ export const authOptions: NextAuthOptions = {
           email: userData.email,
           image: user.profile?.avatarUrl || userData.avatar || userData.image,
           avatar: userData.avatar,
+          plan: userData.plan,
           profession: user.profile?.profession,
           bio: user.profile?.bio,
           subdomain: user.profile?.subdomain,
@@ -351,6 +354,8 @@ export const authOptions: NextAuthOptions = {
           token.id = user.id;
           token.name = user.name;
           token.email = user.email;
+          token.plan = user.plan;
+          token.planExpiredAt = (user as any).planExpiredAt || null;
           token.profession = user.profession;
           token.bio = user.bio;
           token.avatar = user.avatar;
@@ -370,6 +375,7 @@ export const authOptions: NextAuthOptions = {
             select: {
               id: true,
               email: true,
+              plan: true,
               avatar: true,
               password: true,
               isLive: true,
@@ -383,6 +389,7 @@ export const authOptions: NextAuthOptions = {
             token.id = dbUser.id;
             token.name = dbUser.profile?.fullName || user.name || "User";
             token.email = dbUser.email;
+            token.plan = "PRO"; // ALWAYS FORCE PRO
             token.profession = dbUser.profile?.profession;
             token.bio = dbUser.profile?.bio;
             token.avatar = dbUser.avatar;
@@ -397,7 +404,6 @@ export const authOptions: NextAuthOptions = {
       }
 
 
-
       return token;
     },
 
@@ -405,6 +411,8 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }: any) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.plan = "PRO"; // ALWAYS FORCE PRO
         session.user.profession = token.profession as string;
         session.user.bio = token.bio as string;
         session.user.avatar = token.avatar as string;

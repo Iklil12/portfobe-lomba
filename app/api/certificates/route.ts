@@ -68,11 +68,26 @@ export async function POST(req: Request) {
 
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
+    // --- PLAN ENFORCEMENT: CEK KUOTA FREE ---
+    if (user.plan === 'FREE') {
+      const certCount = await prisma.certificate.count({ where: { userId: user.id, deletedAt: null } });
+      if (certCount >= 2) {
+        return NextResponse.json({ 
+          error: "Kuota FREE maksimal 2 sertifikat. Silakan upgrade ke PRO.",
+          code: "QUOTA_EXCEEDED"
+        }, { status: 403 });
+      }
+    }
+
     const body = await req.json();
     const { title, description, mediaUrl, issuer, year, status } = body;
 
     if (!title || !mediaUrl || !issuer || !year) {
       return NextResponse.json({ error: "Kolom wajib harus diisi." }, { status: 400 });
+    }
+
+    if (mediaUrl && !mediaUrl.startsWith("http://") && !mediaUrl.startsWith("https://")) {
+      return NextResponse.json({ error: "Format URL media tidak valid" }, { status: 400 });
     }
 
     const newCertificate = await prisma.certificate.create({
@@ -118,6 +133,10 @@ export async function PATCH(req: Request) {
 
     if (!id) {
       return NextResponse.json({ error: "ID Sertifikat tidak ditemukan." }, { status: 400 });
+    }
+
+    if (mediaUrl && !mediaUrl.startsWith("http://") && !mediaUrl.startsWith("https://")) {
+      return NextResponse.json({ error: "Format URL media tidak valid" }, { status: 400 });
     }
 
     const existingCert = await prisma.certificate.findUnique({ where: { id } });

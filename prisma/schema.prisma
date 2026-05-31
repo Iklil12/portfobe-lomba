@@ -12,6 +12,7 @@ model User {
   id                     String          @id @default(uuid())
   email                  String          @unique
   password               String
+  plan                   PlanType        @default(PRO)
   role                   Role            @default(USER)
   avatar                 String
   createdAt              DateTime        @default(now())
@@ -19,6 +20,8 @@ model User {
   isLive                 Boolean         @default(false)
   emailVerified          DateTime?
   pendingEmail           String?
+  
+  
   accounts               Account[]
   activities             Activity[]
   analytics              Analytics[]
@@ -28,12 +31,14 @@ model User {
   profile                Profile?
   projects               Project[]
   siteAppearance         SiteAppearance?
+  
   integrations           Integration[]
   canvaProjects          CanvaProject[]
   themeFavorites         ThemeFavorite[]
   testimonials           Testimonial[]
   visitorSessions        VisitorSession[]
   hourlyStats            HourlyStats[]
+  
 }
 
 model PasswordResetToken {
@@ -99,6 +104,7 @@ model SiteAppearance {
   fontBody      String  @default("Inter")
   buttonShape   String  @default("rounded")
   cardStyle     String  @default("flat")
+  customTexts   String  @default("{}") @db.Text
   favoriteThemes String @default("[]") @db.Text
   user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -248,6 +254,7 @@ model Analytics {
   @@index([type])
   @@index([sessionId])
   @@index([userId], map: "Analytics_userId_fkey")
+  @@index([userId, createdAt]) // OPTIMIZATION: Composite index for fast time-range queries per user
 }
 
 model VisitorSession {
@@ -285,7 +292,9 @@ model VisitorSession {
   @@index([userId])
   @@index([visitorId])
   @@index([createdAt])
+  @@index([userId, createdAt]) // OPTIMIZATION: Composite index for fast time-range queries per user
 }
+
 
 
 model DailyStats {
@@ -341,10 +350,20 @@ model RegisterAttempt {
   @@index([ip])
 }
 
+enum PlanType {
+  FREE
+  PRO
+  SUPREME
+}
+
+
+
 enum Role {
   USER
   ADMIN
 }
+
+
 
 model Integration {
   id              String   @id @default(uuid())
@@ -394,4 +413,11 @@ model Testimonial {
 
   @@index([userId])
 }
+
+
+
+
+
+
+
 

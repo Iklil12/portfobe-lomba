@@ -69,7 +69,7 @@ export function Topbar({
           </button>
           <GlobalSearch />
         </div>
-        
+
         <div className="flex items-center gap-4 sm:gap-6">
           {!isLoading && (
             <>
@@ -86,35 +86,35 @@ export function Topbar({
                   {alertCount > 0 && <span className="absolute top-2.5 right-3 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full animate-pulse"></span>}
                 </button>
 
-              {isNotifOpen && (
-                <div className="absolute top-[calc(100%+12px)] right-[-60px] md:right-0 w-[320px] bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.12)] border border-slate-200 py-2 animate-dropdown z-50">
-                  <div className="px-4 py-3 border-b border-slate-100 mb-1 flex justify-between items-center">
-                    <p className="text-[11px] font-extrabold uppercase tracking-widest text-slate-800">Pusat Informasi</p>
-                    {alertCount > 0 && <span className="text-[10px] px-2.5 py-0.5 bg-red-100 text-red-600 rounded-full font-bold">{alertCount} Info</span>}
+                {isNotifOpen && (
+                  <div className="absolute top-[calc(100%+12px)] right-[-60px] md:right-0 w-[320px] bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.12)] border border-slate-200 py-2 animate-dropdown z-50">
+                    <div className="px-4 py-3 border-b border-slate-100 mb-1 flex justify-between items-center">
+                      <p className="text-[11px] font-extrabold uppercase tracking-widest text-slate-800">Pusat Informasi</p>
+                      {alertCount > 0 && <span className="text-[10px] px-2.5 py-0.5 bg-red-100 text-red-600 rounded-full font-bold">{alertCount} Info</span>}
+                    </div>
+                    <div className="max-h-[60vh] overflow-y-auto px-2 custom-scrollbar flex flex-col gap-1">
+                      {notifications.length === 0 ? (
+                        <div className="px-5 py-8 text-center text-slate-400">
+                          <i className="fas fa-bell-slash text-2xl mb-2 opacity-20"></i>
+                          <p className="text-sm font-medium">Tidak ada notifikasi baru.</p>
+                        </div>
+                      ) : (
+                        notifications.map((notif) => (
+                          <Link key={notif.id} href={notif.link} onClick={() => setIsNotifOpen(false)} className="p-3 hover:bg-slate-50 rounded-xl transition-colors flex items-start gap-3 group">
+                            <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${notif.type === 'critical' ? 'bg-red-50 text-red-500' : 'bg-blue-50 text-blue-500'}`}>
+                              <i className={`fas ${notif.icon} text-sm`}></i>
+                            </div>
+                            <div className="flex-1 pt-0.5">
+                              <p className={`text-sm font-bold mb-1 ${notif.type === 'critical' ? 'text-red-600' : 'text-slate-800'}`}>{notif.title}</p>
+                              <p className="text-[13px] text-slate-500 font-medium leading-relaxed">{notif.desc}</p>
+                            </div>
+                          </Link>
+                        ))
+                      )}
+                    </div>
                   </div>
-                  <div className="max-h-[60vh] overflow-y-auto px-2 custom-scrollbar flex flex-col gap-1">
-                    {notifications.length === 0 ? (
-                      <div className="px-5 py-8 text-center text-slate-400">
-                        <i className="fas fa-bell-slash text-2xl mb-2 opacity-20"></i>
-                        <p className="text-sm font-medium">Tidak ada notifikasi baru.</p>
-                      </div>
-                    ) : (
-                      notifications.map((notif) => (
-                        <Link key={notif.id} href={notif.link} onClick={() => setIsNotifOpen(false)} className="p-3 hover:bg-slate-50 rounded-xl transition-colors flex items-start gap-3 group">
-                          <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${notif.type === 'critical' ? 'bg-red-50 text-red-500' : 'bg-blue-50 text-blue-500'}`}>
-                            <i className={`fas ${notif.icon} text-sm`}></i>
-                          </div>
-                          <div className="flex-1 pt-0.5">
-                            <p className={`text-sm font-bold mb-1 ${notif.type === 'critical' ? 'text-red-600' : 'text-slate-800'}`}>{notif.title}</p>
-                            <p className="text-[13px] text-slate-500 font-medium leading-relaxed">{notif.desc}</p>
-                          </div>
-                        </Link>
-                      ))
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
             </>
           )}
 
@@ -184,30 +184,30 @@ export function Topbar({
                   )}
                   <div className="h-px bg-slate-100 my-1 mx-2"></div>
                   <Link href="/dashboard/profile" className="px-3 py-2.5 text-[13px] font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
-                    <i className="fas fa-user text-slate-400 w-4 text-center"></i> 
+                    <i className="fas fa-user text-slate-400 w-4 text-center"></i>
                     <span className="flex-1">Edit Profil</span>
                   </Link>
                   <Link href="/dashboard/settings" className="px-3 py-2.5 text-[13px] font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
-                    <i className="fas fa-cog text-slate-400 w-4 text-center"></i> 
+                    <i className="fas fa-cog text-slate-400 w-4 text-center"></i>
                     <span className="flex-1">Pengaturan</span>
                   </Link>
-                  
+
                   <div className="h-px bg-slate-100 my-1 mx-2"></div>
-                  
+
                   <Link href="/support" className="px-3 py-2.5 text-[13px] font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
-                    <i className="fas fa-headset text-slate-400 w-4 text-center"></i> 
+                    <i className="fas fa-headset text-slate-400 w-4 text-center"></i>
                     <span className="flex-1">Pusat Bantuan</span>
                   </Link>
                   {userPlan === 'FREE' && (
                     <Link href="/pricing" className="px-3 py-2.5 text-[13px] font-semibold text-[#ff9e00] hover:bg-[#ff9e00]/10 rounded-lg transition-colors flex items-center gap-3" onClick={() => setIsProfileMenuOpen(false)}>
-                      <i className="fas fa-arrow-up w-4 text-center"></i> 
+                      <i className="fas fa-arrow-up w-4 text-center"></i>
                       <span className="flex-1">Upgrade Pro</span>
                     </Link>
                   )}
                 </div>
-                
+
                 <div className="h-px bg-slate-100 mt-2 mb-3"></div>
-                
+
                 {/* Sign Out Button */}
                 <div className="px-4 pb-2">
                   <button onClick={() => { setIsProfileMenuOpen(false); setShowLogoutModal(true); }} className="w-full px-4 py-2.5 text-[13px] font-bold text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-2">
@@ -226,18 +226,18 @@ export function Topbar({
         <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
           {/* 1. Full Screen Blur */}
           <div className="absolute inset-0 bg-slate-900/30 backdrop-blur-md transition-opacity duration-300" onClick={() => !isLoggingOut && setShowLogoutModal(false)}></div>
-          
+
           {/* Modal Container */}
           <div className="relative z-10 w-full max-w-[310px] md:max-w-[400px] animate-enter-modal mx-auto">
             {/* 2. Outer Blurred Box */}
             <div className="absolute inset-[-12px] md:inset-[-20px] bg-white/40 backdrop-blur-2xl rounded-[2rem] border border-white/50 shadow-2xl"></div>
-            
+
             {/* 3. Main Inner White Box */}
             <div className="relative bg-white rounded-[1.5rem] p-5 md:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.08)] flex flex-col text-center">
-              
+
               {/* Close Button */}
               <button onClick={() => !isLoggingOut && setShowLogoutModal(false)} className="absolute top-3 right-3 md:top-4 md:right-4 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors">
-                 <i className="fas fa-times text-xs md:text-sm"></i>
+                <i className="fas fa-times text-xs md:text-sm"></i>
               </button>
 
               {/* Rippling Orange Icon */}
@@ -248,23 +248,23 @@ export function Topbar({
                   <i className="fas fa-sign-out-alt text-[8px] md:text-[10px] translate-x-px"></i>
                 </div>
               </div>
-              
+
               <h3 className="text-lg md:text-xl font-black text-slate-900 mb-1.5 md:mb-2 tracking-tight">Keluar dari akun?</h3>
               <p className="text-xs md:text-sm font-medium text-slate-500 mb-5 md:mb-6 leading-relaxed px-1">
                 Sesi Anda akan diakhiri. Anda perlu masuk kembali untuk mengakses dashboard kreator.
               </p>
-              
+
               <div className="flex flex-row gap-2 md:gap-3 w-full">
-                <button 
-                  onClick={handleLogout} 
-                  disabled={isLoggingOut} 
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
                   className="flex-1 py-2.5 md:py-3 bg-[#ff9e00] hover:bg-[#e68e00] rounded-xl font-bold text-white shadow-lg shadow-[#ff9e00]/20 active:scale-95 transition-all flex items-center justify-center gap-2 text-xs md:text-sm disabled:opacity-50"
                 >
                   {isLoggingOut ? <i className="fas fa-circle-notch animate-spin text-white"></i> : 'Keluar'}
                 </button>
-                <button 
-                  onClick={() => setShowLogoutModal(false)} 
-                  disabled={isLoggingOut} 
+                <button
+                  onClick={() => setShowLogoutModal(false)}
+                  disabled={isLoggingOut}
                   className="flex-1 py-2.5 md:py-3 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl font-bold text-slate-700 active:scale-95 transition-all text-xs md:text-sm disabled:opacity-50"
                 >
                   Batal

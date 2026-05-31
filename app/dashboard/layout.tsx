@@ -53,18 +53,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const isDashboardRoot = pathname === '/dashboard';
   const isEditorPage = pathname === '/dashboard/appearance';
-  
+
   if (!isLoading && isSubdomainEmpty && !isDashboardRoot) {
-    if (typeof window !== 'undefined') window.location.href = '/dashboard'; 
+    if (typeof window !== 'undefined') window.location.href = '/dashboard';
   }
 
-  if (isEditorPage) return <>{children}</>; 
+  if (isEditorPage) return <>{children}</>;
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#FAFAFA] font-sans text-slate-900 selection:bg-slate-200 selection:text-slate-900 relative">
-      <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
         * { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif !important; }
+        .font-mono { font-family: 'Space Mono', monospace !important; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .animate-enter-modal { animation: modalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -80,27 +83,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         .delay-300 { animation-delay: 300ms; }
       `}} />
 
-      <Sidebar 
-        isLoading={isLoading} 
-        userPlan={userPlan} 
-        isSidebarOpen={isSidebarOpen} 
+      <Sidebar
+        isLoading={isLoading}
+        userPlan={userPlan}
+        isSidebarOpen={isSidebarOpen}
         projectsCount={totalProjectsAndCertificates}
         linksCount={linksCount}
         testimonialsCount={testimonialsCount}
       />
 
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#FAFAFA] relative w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
-        
+
         {/* GLOBAL BACKGROUND STATIC - Tidak akan ikut tergeser oleh Notifikasi */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-           <div className="absolute inset-0" style={{ backgroundSize: '40px 40px', backgroundImage: 'linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px)', maskImage: 'linear-gradient(to bottom, white 40%, transparent)' }}></div>
-           <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-slate-200/50 rounded-full blur-[120px]"></div>
-           <div className="absolute top-[10%] left-[-10%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-amber-400/5 rounded-full blur-[120px]"></div>
+          <div className="absolute inset-0" style={{ backgroundSize: '40px 40px', backgroundImage: 'linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px)', maskImage: 'linear-gradient(to bottom, white 40%, transparent)' }}></div>
+          <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-slate-200/50 rounded-full blur-[120px]"></div>
+          <div className="absolute top-[10%] left-[-10%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-amber-400/5 rounded-full blur-[120px]"></div>
         </div>
 
         <div className="relative z-40 w-full flex flex-col">
           <GlobalAnnouncementBanner announcements={announcementsData} userPlan={userPlan} />
-          <Topbar 
+          <Topbar
             isLoading={isLoading}
             userName={userName}
             userEmail={userEmail}
@@ -127,10 +130,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {(!isLoading && isSubdomainEmpty && !isEditorPage) && (
         <OnboardingModal userName={userName} />
       )}
-      
+
       {(!isLoading && !isSubdomainEmpty && !isEditorPage) && (
-        <WelcomeBannerModal 
-          userName={userName} 
+        <WelcomeBannerModal
+          userName={userName}
           userPlan={userPlan}
           canClaimTrial={canClaimTrial}
           adminData={{

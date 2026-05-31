@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { EditableText } from '@/components/ui/EditableText';
 
 export interface Testimonial {
   id: string;
@@ -15,15 +16,19 @@ export interface Testimonial {
 interface TestimonialSectionProps {
   testimonials: Testimonial[];
   variant?: 'marquee' | 'grid' | 'slider' | 'stack';
+  isEditor?: boolean;
+  theme?: any;
 }
 
-export function TestimonialSection({ testimonials, variant = 'grid' }: TestimonialSectionProps) {
+export function TestimonialSection({ testimonials, variant = 'grid', isEditor = false, theme }: TestimonialSectionProps) {
   if (!testimonials || testimonials.length === 0) return null;
 
   if (variant === 'grid') {
     return (
       <div className="w-full py-10">
-        <h3 className="text-2xl font-bold mb-8">Testimonials</h3>
+        <h3 className="text-2xl font-black uppercase tracking-tighter mb-8 min-heading">
+          <EditableText value={theme?.customTexts?.testimonials_title || 'Testimonials'} field="testimonials_title" entity="appearance" isEditor={isEditor} maxLength={25} className="min-heading" />
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((t) => (
             <motion.div 
@@ -61,7 +66,9 @@ export function TestimonialSection({ testimonials, variant = 'grid' }: Testimoni
   
   return (
     <div className="w-full py-10">
-      <h3 className="text-2xl font-bold mb-8 text-center">Testimonials</h3>
+      <h3 className="text-2xl font-black uppercase tracking-tighter mb-8 text-center min-heading">
+        <EditableText value={theme?.customTexts?.testimonials_title || 'Testimonials'} field="testimonials_title" entity="appearance" isEditor={isEditor} maxLength={25} className="min-heading" />
+      </h3>
       <div className="flex flex-col gap-6 max-w-3xl mx-auto">
         {testimonials.map((t) => (
           <div key={t.id} className="p-6 rounded-2xl bg-white/5 border border-white/10 text-center">

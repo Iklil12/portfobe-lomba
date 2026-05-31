@@ -3,9 +3,13 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // UPDATE TESTIMONIAL
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const rateLimitResponse = await checkRateLimit();
+  if (rateLimitResponse) return rateLimitResponse;
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -49,6 +53,9 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
 // DELETE TESTIMONIAL
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const rateLimitResponse = await checkRateLimit();
+  if (rateLimitResponse) return rateLimitResponse;
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

@@ -31,7 +31,7 @@ export function Navbar() {
 
   return (
     <>
-      <nav className={`animate-hero-nav fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] flex justify-center ${isScrolled ? 'pt-4 px-4' : 'pt-6 px-6 md:px-12'}`}>
+      <nav className={`nav-system-font animate-hero-nav fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] flex justify-center ${isScrolled ? 'pt-4 px-4' : 'pt-6 px-6 md:px-12'}`}>
         <div className={`flex justify-between items-center transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] w-full rounded-full ${isScrolled ? 'bg-white/90 backdrop-blur-md border border-slate-300 shadow-[0_10px_40px_rgba(0,0,0,0.05)] px-6 py-3 max-w-4xl' : 'bg-transparent border border-transparent px-0 py-0 max-w-7xl'}`}>
 
           <Link href="/" className="flex items-center cursor-pointer group">
@@ -40,12 +40,12 @@ export function Navbar() {
 
           <div className="hidden md:flex items-center space-x-10">
             {navItems.map(item => (
-              <Link key={item.label} href={item.href} className="nav-link text-slate-600 hover:text-slate-900 text-sm font-bold transition-colors">{item.label}</Link>
+              <Link key={item.label} href={item.href} className="nav-link text-slate-600 hover:text-slate-900 text-sm font-normal transition-colors">{item.label}</Link>
             ))}
           </div>
 
           <div className="hidden md:flex items-center space-x-3">
-            <Link href="/login" className="text-slate-600 hover:text-slate-900 text-sm font-bold px-5 py-2 hover:bg-slate-100 rounded-full transition-colors">Log in</Link>
+            <Link href="/login" className="text-slate-600 hover:text-slate-900 text-sm font-normal px-5 py-2 hover:bg-slate-100 rounded-full transition-colors">Log in</Link>
             <Link href="/register" className="px-7 py-2.5 rounded-full bg-[#0f172a] text-white text-sm font-bold hover:bg-black transition-all duration-300 hover:shadow-lg hover:shadow-slate-900/20 active:scale-95 flex items-center gap-2 group">
               Get Started
             </Link>

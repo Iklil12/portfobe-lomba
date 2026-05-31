@@ -24,12 +24,12 @@ export const SYSTEM_RESERVED = [
 ];
 
 export const PROFANITY_LIST = [
-  // Bahasa Indonesia & Daerah
+  // Filter Kata-Kata Kasar Bahasa Indonesia & Daerah
   "anjing", "babi", "bangsat", "jancok", "tolol", "goblok", "kontol", "memek", 
   "ngentot", "peler", "kampret", "bajingan", "pantek", "kimak", "lonte", "sundel",
   "bego", "tai", "bgst", "anjg", "cok", "cokcok", "cokgiat", "taik", "ajg","entot","sange","crot",
   
-  // Bahasa Inggris
+  // Filter Kata-Kata Kasar Bahasa Inggris
   "bitch", "fuck", "shit", "asshole", "dick", "pussy", "cunt", "motherfucker", 
   "bastard", "slut", "whore", "nigger", "nigga", "faggot", "bullshit"
 ];

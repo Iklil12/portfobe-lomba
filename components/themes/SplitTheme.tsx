@@ -11,6 +11,7 @@ import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { EditableText } from '@/components/ui/EditableText';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -83,7 +84,8 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
     };
 
     const nameParts = fullName.split(' ');
-    const firstName = nameParts[0];
+    const firstName = data?.profile?.firstName || data?.firstName || nameParts[0];
+    const lastName = data?.profile?.lastName || data?.lastName || nameParts.slice(1).join(' ');
 
     // Setup Animasi Framer Motion
     const nexusEase = [0.22, 1, 0.36, 1] as any;
@@ -146,14 +148,15 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
 
                         {/* Identity */}
                         <div className="flex flex-col">
-                            <h1 className="font-display font-extrabold text-4xl @lg:text-5xl tracking-tight leading-none text-white mb-3">
-                                {fullName}
+                            <h1 className="font-display font-extrabold text-4xl @lg:text-5xl tracking-tight leading-none text-white mb-3 flex flex-wrap gap-2">
+                                <EditableText value={firstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
+                                <EditableText value={lastName} field="lastName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
                             </h1>
                             <h2 className="font-sans text-base @lg:text-lg font-medium text-[var(--hl)] mb-6">
-                                {profession}
+                                <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={30} />
                             </h2>
                             <p className="font-sans text-sm @lg:text-base text-slate-400 leading-relaxed font-normal">
-                                {bio}
+                                <EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" maxLength={250} />
                             </p>
                         </div>
                     </div>
@@ -201,10 +204,10 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                             className={`grid grid-cols-2 @lg:grid-cols-4 border-b nexus-border `}
                         >
                             {[
-                                { label: "Projects", val: archiveItems.length },
-                                { label: "Awards", val: awardItems.length },
-                                { label: "Experience", val: "Pro" },
-                                { label: "Time", val: currentTime || "00:00" }
+                                { label: <EditableText value={theme?.customTexts?.stats_projects || "Projects"} field="stats_projects" entity="appearance" isEditor={isEditor} maxLength={15} as="span" />, val: archiveItems.length },
+                                { label: <EditableText value={theme?.customTexts?.stats_awards || "Awards"} field="stats_awards" entity="appearance" isEditor={isEditor} maxLength={15} as="span" />, val: awardItems.length },
+                                { label: <EditableText value={theme?.customTexts?.stats_exp || "Experience"} field="stats_exp" entity="appearance" isEditor={isEditor} maxLength={15} as="span" />, val: "Pro" },
+                                { label: <EditableText value={theme?.customTexts?.stats_time || "Time"} field="stats_time" entity="appearance" isEditor={isEditor} maxLength={15} as="span" />, val: currentTime || "00:00" }
                             ].map((stat, idx) => (
                                 <motion.div key={idx} variants={fadeUp} className="flex flex-col items-center justify-center py-8 @lg:py-12 border-r nexus-border last:border-r-0 hover:bg-white/5 transition-colors">
                                     <span className="font-display font-bold text-3xl @lg:text-4xl text-white mb-1">{stat.val}</span>
@@ -216,8 +219,8 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                         {/* SECTION: SELECTED WORKS (Interactive List) */}
                         <section id="work" className="flex flex-col pt-16 @lg:pt-24 pb-10 border-b nexus-border">
                             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className={`flex justify-between items-end mb-10 px-6 @md:px-12`}>
-                                <h2 className="font-display font-extrabold text-4xl @lg:text-6xl text-white">Selected Works</h2>
-                                <span className="font-sans text-xs font-medium text-[var(--hl)] hidden @sm:block">Explore the archive</span>
+                                <h2 className="font-display font-extrabold text-4xl @lg:text-6xl text-white"><EditableText value={theme?.customTexts?.projects_title || 'Selected Works'} field="projects_title" entity="appearance" isEditor={isEditor} maxLength={30} as="span" /></h2>
+                                <span className="font-sans text-xs font-medium text-[var(--hl)] hidden @sm:block"><EditableText value={theme?.customTexts?.projects_subtitle || 'Explore the archive'} field="projects_subtitle" entity="appearance" isEditor={isEditor} maxLength={30} as="span" /></span>
                             </motion.div>
 
                             <div className="flex flex-col w-full">
@@ -300,7 +303,7 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
 
                             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className={`w-full flex mt-12 px-6 @md:px-12`}>
                                 <Link href={`/${subdomain}/gallery`} scroll={false} className="inline-flex items-center gap-3 font-sans font-bold text-sm uppercase tracking-widest text-white hover:text-[var(--hl)] transition-colors group">
-                                    View Full Archive <i className="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+                                    <EditableText value={theme?.customTexts?.explore_archive || 'View Full Archive'} field="explore_archive" entity="appearance" isEditor={isEditor} maxLength={30} as="span" /> <i className="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
                                 </Link>
                             </motion.div>
                         </section>
@@ -309,7 +312,7 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                         {items3D.length > 0 && (
                             <section className="flex flex-col pt-16 @lg:pt-24 pb-10 border-b nexus-border">
                                 <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className={`flex justify-between items-end mb-10 px-6 @md:px-12`}>
-                                    <h2 className="font-display font-extrabold text-4xl @lg:text-6xl text-white">3D Models</h2>
+                                    <h2 className="font-display font-extrabold text-4xl @lg:text-6xl text-white"><EditableText value={theme?.customTexts?.models_title || '3D Models'} field="models_title" entity="appearance" isEditor={isEditor} maxLength={30} as="span" /></h2>
                                     <span className="font-sans text-xs font-medium text-[var(--hl)] hidden @sm:block">({items3D.length}) Items</span>
                                 </motion.div>
 
@@ -360,7 +363,7 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                         {testimonials.length > 0 && (
                             <section className="flex flex-col pt-16 @lg:pt-24 pb-16 border-b nexus-border">
                                 <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className={`mb-10 px-6 @md:px-12`}>
-                                    <h2 className="font-display font-extrabold text-4xl @lg:text-6xl text-white">Client Feedback</h2>
+                                    <h2 className="font-display font-extrabold text-4xl @lg:text-6xl text-white"><EditableText value={theme?.customTexts?.testimonials_title || 'Client Feedback'} field="testimonials_title" entity="appearance" isEditor={isEditor} maxLength={30} as="span" /></h2>
                                 </motion.div>
                                 <div className="flex flex-col w-full px-6 @md:px-12 gap-6">
                                     {testimonials.map((t: any, i: number) => (
@@ -402,7 +405,7 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                         {awardItems.length > 0 && (
                             <section id="awards" className="flex flex-col pt-16 @lg:pt-24 pb-16 border-b nexus-border">
                                 <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className={`mb-10 px-6 @md:px-12`}>
-                                    <h2 className="font-display font-extrabold text-4xl @lg:text-6xl text-white">Recognition</h2>
+                                    <h2 className="font-display font-extrabold text-4xl @lg:text-6xl text-white"><EditableText value={theme?.customTexts?.awards_title || 'Recognition'} field="awards_title" entity="appearance" isEditor={isEditor} maxLength={30} as="span" /></h2>
                                 </motion.div>
 
                                 <div className="flex flex-col w-full">
@@ -437,9 +440,9 @@ export default function SplitTheme({ data, theme, isMobileView = false, isCardPr
                         {/* SECTION: FOOTER / CTA */}
                         <footer className={`flex flex-col pt-24 pb-12 px-6 @md:px-12`}>
                             <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className="flex flex-col items-start mb-20">
-                                <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-[var(--hl)] mb-4">What's Next?</span>
+                                <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-[var(--hl)] mb-4"><EditableText value={theme?.customTexts?.cta_subtitle || "What's Next?"} field="cta_subtitle" entity="appearance" isEditor={isEditor} maxLength={30} as="span" /></span>
                                 <h2 className="font-display font-extrabold text-5xl @md:text-7xl @lg:text-[6cqi] text-white leading-[0.9] mb-8">
-                                    Let's build<br/>the future.
+                                    <EditableText value={theme?.customTexts?.cta_title || "Let's build the future."} field="cta_title" entity="appearance" isEditor={isEditor} maxLength={40} as="span" />
                                 </h2>
                                 <a href={`mailto:${userEmail}`} className={`px-8 py-4 bg-white text-black hover:bg-[var(--hl)] hover:text-white ${radiusClass} font-sans font-bold text-sm uppercase tracking-widest transition-colors duration-300`}>
                                     Get in Touch

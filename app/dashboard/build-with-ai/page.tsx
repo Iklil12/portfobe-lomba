@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { showToast } from '@/lib/customToast';
+import { useProfile } from '@/hooks/useProfile';
 
 export default function BuildWithAIPage() {
   const router = useRouter();
@@ -11,6 +12,8 @@ export default function BuildWithAIPage() {
   
   const [promptSource, setPromptSource] = useState<'manual' | 'existing_profile'>('manual');
   const [prompt, setPrompt] = useState('');
+  
+  const { state: profileState } = useProfile();
   
   const [updateProfession, setUpdateProfession] = useState(true);
   const [updateBio, setUpdateBio] = useState(true);
@@ -38,6 +41,10 @@ export default function BuildWithAIPage() {
   const handleGenerate = async () => {
     if (promptSource === 'manual' && !prompt.trim()) {
       showToast({ message: "Silakan isi instruksi terlebih dahulu", id: "err-prompt", icon: "fa-warning" });
+      return;
+    }
+    if (promptSource === 'existing_profile' && (!profileState.bio || profileState.bio.trim() === '')) {
+      showToast({ message: "Bio profil Anda kosong! Silakan isi bio di pengaturan Profil terlebih dahulu.", id: "err-prompt-bio", icon: "fa-warning" });
       return;
     }
 
@@ -214,7 +221,13 @@ export default function BuildWithAIPage() {
               </button>
 
               <button 
-                onClick={() => setPromptSource('existing_profile')}
+                onClick={() => {
+                  if (!profileState.isLoadingData && (!profileState.bio || profileState.bio.trim() === '')) {
+                    showToast({ message: "Opsi ini tidak dapat digunakan karena Bio Anda masih kosong. Silakan gunakan opsi Ketik Manual atau isi Bio di halaman Profil.", id: "err-bio-empty", icon: "fa-info-circle" });
+                    return;
+                  }
+                  setPromptSource('existing_profile');
+                }}
                 className={`flex-1 p-4 rounded-2xl border text-left transition-all ${promptSource === 'existing_profile' ? 'bg-violet-600/10 border-violet-500/50 shadow-[0_0_15px_rgba(139,92,246,0.15)]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
               >
                 <div className="flex items-center justify-between mb-1.5">

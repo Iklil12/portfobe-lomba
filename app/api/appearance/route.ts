@@ -27,6 +27,7 @@ export async function GET(req: Request) {
         where: { email: session.user.email },
         select: {
           id: true,
+          plan: true,
           profile: { select: { subdomain: true, fullName: true } },
           siteAppearance: { select: { themeTemplate: true, favoriteThemes: true } }
         }
@@ -75,28 +76,54 @@ export async function PATCH(req: Request) {
         buttonShape, 
         cardStyle,
         splashScreen,
-        favoriteThemes
+        favoriteThemes,
+        customTexts
     } = body;
 
     // OPTIMASI: Jika hanya update favorit, lewati pengecekan plan dan logging
     const isOnlyFavorites = favoriteThemes !== undefined && themeTemplate === undefined;
 
+    // VALIDASI KEAMANAN: Batasi ukuran customTexts untuk mencegah serangan Payload Bloat
+    let stringifiedCustomTexts: string | undefined = undefined;
+    if (customTexts !== undefined) {
+      stringifiedCustomTexts = safeStringifyJson(customTexts);
+      if (stringifiedCustomTexts.length > 5000) {
+        return NextResponse.json({ error: "Payload customTexts terlalu besar. Maksimal 5000 karakter." }, { status: 400 });
+      }
+    }
+
     if (!isOnlyFavorites) {
-      // Pro features enabled for everyone in Lomba edition
+      // --- PLAN ENFORCEMENT: PRO FEATURES ---
+      const selectedThemeData = THEMES_DATA.find(t => t.id === themeTemplate);
+      const isProTheme = selectedThemeData ? selectedThemeData.isPro : false;
+      const isProSplash = splashScreen === true;
+      const isProSmoothScroll = customTexts?.smooth_scroll === 'true';
+
+      if ((isProTheme || isProSplash || isProSmoothScroll) && user.plan === 'FREE') {
+        return NextResponse.json({ 
+          error: isProTheme 
+            ? "Tema ini eksklusif untuk PRO Creator." 
+            : isProSplash 
+              ? "Fitur Cinematic Intro eksklusif untuk PRO Creator."
+              : "Fitur Smooth Scroll eksklusif untuk PRO Creator.",
+          code: "FEATURE_LOCKED"
+        }, { status: 403 });
+      }
     }
 
     // UPDATE ATAU CREATE KE TABEL SITE_APPEARANCE
     const updatedAppearance = await prisma.siteAppearance.upsert({
       where: { userId: user.id },
       update: { 
-        themeTemplate, 
-        themeColor, 
-        fontHeading, 
-        fontBody, 
-        buttonShape, 
-        cardStyle,
-        splashScreen,
-        favoriteThemes: favoriteThemes !== undefined ? safeStringifyJson(favoriteThemes) : undefined
+        ...(themeTemplate !== undefined && { themeTemplate }), 
+        ...(themeColor !== undefined && { themeColor }), 
+        ...(fontHeading !== undefined && { fontHeading }), 
+        ...(fontBody !== undefined && { fontBody }), 
+        ...(buttonShape !== undefined && { buttonShape }), 
+        ...(cardStyle !== undefined && { cardStyle }),
+        ...(splashScreen !== undefined && { splashScreen }),
+        ...(favoriteThemes !== undefined && { favoriteThemes: safeStringifyJson(favoriteThemes) }),
+        ...(stringifiedCustomTexts !== undefined && { customTexts: stringifiedCustomTexts })
       },
       create: {
         userId: user.id,
@@ -107,7 +134,8 @@ export async function PATCH(req: Request) {
         buttonShape, 
         cardStyle,
         splashScreen,
-        favoriteThemes: favoriteThemes !== undefined ? safeStringifyJson(favoriteThemes) : "[]"
+        favoriteThemes: favoriteThemes !== undefined ? safeStringifyJson(favoriteThemes) : "[]",
+        customTexts: stringifiedCustomTexts !== undefined ? stringifiedCustomTexts : "{}"
       }
     });
 

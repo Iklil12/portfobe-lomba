@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // GET ALL TESTIMONIALS FOR USER
 export async function GET(req: Request) {
@@ -19,11 +20,26 @@ export async function GET(req: Request) {
 
 // CREATE NEW TESTIMONIAL
 export async function POST(req: Request) {
+  const rateLimitResponse = await checkRateLimit();
+  if (rateLimitResponse) return rateLimitResponse;
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const user = await prisma.user.findUnique({ where: { email: session.user.email } });
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+  // --- PLAN ENFORCEMENT: CEK KUOTA FREE ---
+  if (user.plan === 'FREE') {
+    const testimonialCount = await prisma.testimonial.count({ where: { userId: user.id } });
+    if (testimonialCount >= 2) {
+      return NextResponse.json({ 
+        error: "Kuota FREE maksimal 2 testimoni. Silakan upgrade ke PRO.",
+        code: "QUOTA_EXCEEDED"
+      }, { status: 403 });
+    }
+  }
+  // -----------------------------------------
 
   try {
     const body = await req.json();

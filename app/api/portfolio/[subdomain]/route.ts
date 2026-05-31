@@ -48,15 +48,29 @@ export async function GET(
 
     // 5. SOFT LOCK: Batasi data berdasarkan plan untuk halaman publik
     // Data ke-6 dst tetap AMAN di database, hanya tidak ditampilkan ke publik
-    const publicProjects     = userData.projects;
-    const publicLinks        = userData.links;
-    const publicCertificates = userData.certificates;
-    const publicTestimonials = userData.testimonials;
+    const isFree = userData.plan === 'FREE';
+    const publicProjects     = isFree ? userData.projects.slice(0, 5)     : userData.projects;
+    const publicLinks        = isFree ? userData.links.slice(0, 1)        : userData.links;
+    const publicCertificates = isFree ? userData.certificates.slice(0, 2) : userData.certificates;
+    const publicTestimonials = isFree ? userData.testimonials.slice(0, 2) : userData.testimonials;
 
-    // 6. Susun Ulang Data
+    // 6. Susun Ulang Data & Tanda Tangani (Sign) URL Aset Bunny CDN untuk Keamanan
+    const tokenKey = process.env.BUNNY_API_KEY || 'default_secret';
+    const { signBunnyUrl } = require("@/lib/bunnySign");
+    
+    const signedProjects = publicProjects.map((proj: any) => {
+      if (proj.projectType === '3d' || proj.projectType === 'video') {
+        return {
+          ...proj,
+          mediaUrl: signBunnyUrl(proj.mediaUrl, tokenKey)
+        };
+      }
+      return proj;
+    });
+
     const responseData = {
       ...userData,
-      projects:     publicProjects,
+      projects:     signedProjects,
       links:        publicLinks,
       certificates: publicCertificates,
       testimonials: publicTestimonials,

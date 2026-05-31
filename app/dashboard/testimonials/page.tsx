@@ -97,6 +97,9 @@ export default function TestimonialsPage() {
       if (res.ok) {
         fetchTestimonials();
         showToast({ message: "Testimoni dihapus", id: "del-success", icon: "fa-trash" });
+      } else {
+        const data = await res.json();
+        showToast({ message: data.error || "Gagal menghapus testimoni", id: "del-error", icon: "fa-exclamation-triangle" });
       }
     } catch (error) {
       console.error(error);
@@ -116,6 +119,9 @@ export default function TestimonialsPage() {
       });
       if (res.ok) {
         fetchTestimonials();
+      } else {
+        const data = await res.json();
+        showToast({ message: data.error || "Gagal mengubah status", id: "toggle-error", icon: "fa-exclamation-triangle" });
       }
     } catch (error) {
       console.error(error);
@@ -134,11 +140,16 @@ export default function TestimonialsPage() {
     setTestimonials(newTestimonials);
 
     try {
-      await fetch('/api/testimonials/reorder', {
+      const res = await fetch('/api/testimonials/reorder', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderedIds: newTestimonials.map((t: any) => t.id) })
       });
+      if (!res.ok) {
+        const data = await res.json();
+        showToast({ message: data.error || "Terlalu banyak request, tunggu sebentar", id: "reorder-error", icon: "fa-hand-paper" });
+        fetchTestimonials(); // Revert ke data asli jika gagal
+      }
     } catch (error) {
       console.error(error);
       fetchTestimonials();

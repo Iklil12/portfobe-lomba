@@ -2,46 +2,19 @@
 "use client";
 
 import Link from 'next/link';
-import { LazyImage } from '@/components/ui/LazyImage';
+import { OptimizedLazyImage } from '@/components/ui/OptimizedLazyImage';
 import { TEMPLATE_LIST } from '@/lib/constants';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useState, useRef, useEffect, useCallback } from 'react';
 
 export function TemplatesSection() {
-  const sectionRef = useScrollReveal<HTMLElement>();
   const [hoveredIndex, setHoveredIndex] = useState<number>(0);
   const [activeCardIndex, setActiveCardIndex] = useState<number>(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isInView, setIsInView] = useState(false);
   const [cardAnimations, setCardAnimations] = useState<boolean[]>(new Array(TEMPLATE_LIST.length).fill(false));
 
-  // Detect when section comes into view for staggered card animations
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          // Stagger card entrance animations
-          TEMPLATE_LIST.forEach((_, i) => {
-            setTimeout(() => {
-              setCardAnimations(prev => {
-                const next = [...prev];
-                next[i] = true;
-                return next;
-              });
-            }, 200 + i * 120);
-          });
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [sectionRef]);
 
   // Track active card on mobile scroll with IntersectionObserver
   useEffect(() => {
@@ -81,11 +54,11 @@ export function TemplatesSection() {
   }, []);
 
   return (
-    <section id="templates" ref={sectionRef} className="relative py-24 md:py-32 bg-[#020202] overflow-hidden border-y border-white/10">
+    <section id="templates" className="relative pt-24 pb-10 md:pt-32 md:pb-12 bg-[#020202] overflow-hidden border-y border-white/10">
       
       {/* Animated Background Glows */}
-      <div className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-[#ff9e00]/8 blur-[180px] rounded-full pointer-events-none animate-blob"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#ff5e00]/6 blur-[200px] rounded-full pointer-events-none animate-blob animation-delay-4000"></div>
+      <div className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-[#ff9e00]/8 blur-[180px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#ff5e00]/6 blur-[200px] rounded-full pointer-events-none"></div>
 
       {/* Subtle Grid Overlay */}
       <div 
@@ -99,7 +72,7 @@ export function TemplatesSection() {
       <div className="max-w-[1600px] mx-auto relative z-10 flex flex-col h-full">
         
         {/* Clean Centered Header with staggered entrance */}
-        <div className={`text-center mb-10 md:mb-16 px-6 transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className="text-center mb-10 md:mb-16 px-6">
 
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-tight mb-6">
             Engineered for <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff9e00] via-[#ffb940] to-[#ff5e00]">Brilliance.</span>
@@ -148,15 +121,15 @@ export function TemplatesSection() {
                   flex flex-col justify-end
                   
                   /* MOBILE: Card dimensions & snapping */
-                  w-[82vw] sm:w-[60vw] h-[60vh] min-h-[420px] snap-center
+                  w-[85vw] sm:w-[65vw] aspect-square snap-center
                   
                   /* DESKTOP: Accordion logic override */
-                  md:w-auto md:h-auto
+                  md:w-auto md:h-auto md:aspect-auto
                   ${isActive ? 'md:flex-[6]' : 'md:flex-[1]'}
                   
                   /* Animation entrance */
                   transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)]
-                  ${isAnimated ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-[0.95]'}
+                  opacity-100 translate-y-0 scale-100
                 `}
                 style={{ transitionDelay: `${index * 60}ms` }}
               >
@@ -165,10 +138,10 @@ export function TemplatesSection() {
                   absolute inset-0 rounded-[1.5rem] md:rounded-[2rem] z-20 pointer-events-none
                   transition-all duration-700
                   ${isMobileActive 
-                    ? 'ring-1 ring-[#ff9e00]/40 shadow-[0_0_40px_rgba(255,158,0,0.12),inset_0_0_40px_rgba(255,158,0,0.05)]' 
+                    ? 'ring-1 ring-white/40 shadow-[0_0_40px_rgba(255,255,255,0.12),inset_0_0_40px_rgba(255,255,255,0.05)]' 
                     : 'ring-1 ring-white/5'}
                   ${isActive 
-                    ? 'md:ring-1 md:ring-[#ff9e00]/30 md:shadow-[0_0_60px_rgba(255,158,0,0.15),inset_0_0_60px_rgba(255,158,0,0.05)]' 
+                    ? 'md:ring-1 md:ring-white/30 md:shadow-[0_0_60px_rgba(255,255,255,0.15),inset_0_0_60px_rgba(255,255,255,0.05)]' 
                     : 'md:ring-1 md:ring-white/5 md:shadow-none'}
                 `}></div>
 
@@ -176,7 +149,7 @@ export function TemplatesSection() {
                 <div className="absolute inset-[1px] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-[#0a0a0a]">
                   
                   {/* Background Image with enhanced transitions */}
-                  <LazyImage 
+                  <OptimizedLazyImage 
                     src={item.image} 
                     alt={item.title} 
                     className={`
@@ -197,7 +170,7 @@ export function TemplatesSection() {
                   `}></div>
                   <div className={`
                     absolute inset-0 transition-opacity duration-700
-                    bg-gradient-to-br from-[#ff9e00]/5 via-transparent to-transparent
+                    bg-gradient-to-br from-white/5 via-transparent to-transparent
                     ${isMobileActive ? 'opacity-100' : 'opacity-0'}
                     ${isActive ? 'md:opacity-100' : 'md:opacity-0'}
                   `}></div>
@@ -227,20 +200,23 @@ export function TemplatesSection() {
 
                   {/* State 2: Expanded Details */}
                   <div className={`
-                    relative p-6 md:p-10 lg:p-12 z-10 flex flex-col justify-end h-full w-full
+                    absolute bottom-0 inset-x-0 z-30
+                    /* MOBILE: Translucent bottom bar for clean layout separation */
+                    bg-[#050505]/90 backdrop-blur-md border-t border-white/[0.04] p-4 flex items-center justify-between gap-4
+                    /* DESKTOP: Traditional absolute spacious overlay */
+                    md:absolute md:inset-0 md:bg-transparent md:backdrop-blur-none md:border-t-0 md:p-10 md:lg:p-12 md:flex md:flex-col md:justify-end md:h-full md:w-full md:gap-0
+                    
                     transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]
-                    /* Default (Mobile): Always visible */
-                    opacity-100 translate-y-0
                     /* Desktop Logic */
                     ${isActive ? 'md:opacity-100 md:translate-y-0 md:delay-200' : 'md:opacity-0 md:translate-y-12 md:pointer-events-none md:absolute md:bottom-0'}
                   `}>
-                    <div className="flex flex-col md:flex-row justify-between md:items-end gap-5 md:gap-4 w-full">
-                      <div className="max-w-xl">
+                    <div className="flex flex-row md:flex-col justify-between items-center md:items-stretch md:justify-end gap-3 md:gap-0 w-full md:h-full">
+                      <div className="max-w-xl min-w-0 flex-1 md:flex-none">
                         {/* Category Tag */}
-                        <p className="text-[#ff9e00] text-xs font-bold uppercase tracking-[0.2em] mb-3 flex items-center gap-2.5">
+                        <p className="text-white text-[9px] sm:text-xs font-bold uppercase tracking-[0.2em] mb-1 sm:mb-1.5 md:mb-3 flex items-center gap-1.5 md:gap-2.5">
                           <span className={`
-                            h-[2px] bg-gradient-to-r from-[#ff9e00] to-[#ff9e00]/0 transition-all duration-700
-                            ${isMobileActive ? 'w-8' : 'w-4'}
+                            h-[2px] bg-gradient-to-r from-white to-transparent transition-all duration-700
+                            ${isMobileActive ? 'w-6 sm:w-8' : 'w-4'}
                             ${isActive ? 'md:w-10' : 'md:w-0'}
                           `}></span>
                           {item.category}
@@ -248,8 +224,8 @@ export function TemplatesSection() {
                         
                         {/* Title with gradient on active */}
                         <h3 className={`
-                          text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter mb-2 md:mb-3 leading-[0.9]
-                          transition-all duration-500
+                          text-base sm:text-lg md:text-xl lg:text-2xl font-bold uppercase tracking-widest mb-0.5 md:mb-2 leading-snug
+                          transition-all duration-500 truncate md:whitespace-normal
                           ${isMobileActive ? 'text-white' : 'text-white/70'}
                           md:text-white
                         `}>
@@ -258,7 +234,7 @@ export function TemplatesSection() {
                         
                         {/* Description - Desktop only */}
                         <p className={`
-                          text-white/50 text-sm hidden md:block max-w-md leading-relaxed
+                          text-white/50 text-sm hidden md:block max-w-md leading-relaxed mt-2
                           transition-all duration-500 delay-100
                           ${isActive ? 'md:opacity-100 md:translate-y-0' : 'md:opacity-0 md:translate-y-4'}
                         `}>
@@ -270,19 +246,19 @@ export function TemplatesSection() {
                       <Link 
                         href="/register" 
                         className={`
-                          shrink-0 w-12 h-12 md:w-14 md:h-14 rounded-full 
+                          shrink-0 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full 
                           flex items-center justify-center 
                           transition-all duration-500 
                           shadow-[0_8px_32px_rgba(0,0,0,0.3)]
                           ${isMobileActive 
-                            ? 'bg-gradient-to-br from-[#ff9e00] to-[#ff5e00] text-black scale-100' 
+                            ? 'bg-white text-black scale-100' 
                             : 'bg-white/10 text-white/40 scale-90'}
                           md:bg-white md:text-black md:scale-100
-                          md:hover:bg-gradient-to-br md:hover:from-[#ff9e00] md:hover:to-[#ff5e00] md:hover:scale-110 md:hover:shadow-[0_8px_40px_rgba(255,158,0,0.3)]
+                          md:hover:bg-white md:hover:scale-110 md:hover:shadow-[0_8px_40px_rgba(255,255,255,0.3)]
                           group/btn
                         `}
                       >
-                        <i className="fas fa-arrow-right -rotate-45 group-hover/btn:rotate-0 transition-transform duration-500 text-base md:text-lg"></i>
+                        <i className="fas fa-arrow-right -rotate-45 group-hover/btn:rotate-0 transition-transform duration-500 text-sm sm:text-base md:text-lg"></i>
                       </Link>
                     </div>
                   </div>
@@ -322,7 +298,7 @@ export function TemplatesSection() {
         </div>
 
         {/* Global Action Button */}
-        <div className={`mt-10 md:mt-16 flex justify-center pb-8 px-6 transition-all duration-700 delay-500 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className="mt-10 md:mt-16 flex justify-center pb-0 px-6">
             <Link href="/register" className="group relative flex items-center gap-4 px-8 py-4 rounded-full border border-white/10 text-white font-bold hover:border-[#ff9e00]/30 hover:shadow-[0_0_40px_rgba(255,158,0,0.1)] transition-all duration-500 w-full md:w-auto justify-center overflow-hidden">
               {/* Button shimmer effect */}
               <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>

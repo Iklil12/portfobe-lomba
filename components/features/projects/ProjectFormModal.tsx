@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from 'react';
-import { CldUploadWidget } from 'next-cloudinary';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { showToast } from '@/lib/customToast';
 import { ProjectType } from '@/hooks/useProjects';
@@ -34,6 +34,8 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
   const file3dInputRef = useRef<HTMLInputElement>(null);
   const [isUploading3D, setIsUploading3D] = useState(false);
   const [upload3DProgress, setUpload3DProgress] = useState(0);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const fileImageInputRef = useRef<HTMLInputElement>(null);
 
   const {
     isModalOpen,
@@ -69,13 +71,16 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 500 * 1024 * 1024) {
-      showToast({ message: "Ukuran video maksimal 500MB", id: "err-video-size", icon: "fa-exclamation-triangle" });
+    if (userPlan === 'FREE') {
+      setShowUpgradeModal(true);
       return;
     }
 
-    if (userPlan === 'FREE') {
-      setShowUpgradeModal(true);
+    const maxVideoSize = userPlan === 'SUPREME' ? 100 * 1024 * 1024 : 50 * 1024 * 1024;
+    const maxVideoSizeLabel = userPlan === 'SUPREME' ? '100MB' : '50MB';
+
+    if (file.size > maxVideoSize) {
+      showToast({ message: `Ukuran video maksimal ${maxVideoSizeLabel}`, id: "err-video-size", icon: "fa-exclamation-triangle" });
       return;
     }
 
@@ -83,33 +88,17 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
     setUploadProgress(0);
 
     try {
-      // 1. Get GUID & API Key dari server (hanya PRO)
-      const createRes = await fetch('/api/bunny/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: projectTitle || file.name })
-      });
+      const formData = new FormData();
+      formData.append('title', projectTitle || file.name);
+      formData.append('file', file);
 
-      if (!createRes.ok) {
-        throw new Error('Gagal inisialisasi upload ke Bunny Stream');
-      }
-
-      const { guid, libraryId, apiKey } = await createRes.json();
-
-      if (!guid || !libraryId || !apiKey) {
-         throw new Error('Konfigurasi server tidak lengkap');
-      }
-
-      // 2. Lakukan PUT request menggunakan XMLHttpRequest agar bisa melacak progress
-      const uploadUrl = `https://video.bunnycdn.com/library/${libraryId}/videos/${guid}`;
-      
+      // Gunakan XMLHttpRequest untuk melacak progress upload ke backend kita
       const xhr = new XMLHttpRequest();
-      xhr.open('PUT', uploadUrl, true);
-      xhr.setRequestHeader('AccessKey', apiKey);
-      xhr.setRequestHeader('Content-Type', 'application/octet-stream');
-      
+      xhr.open('POST', '/api/projects/upload-video', true);
+
       xhr.upload.onprogress = (event) => {
         if (event.lengthComputable) {
+          // Progress ini hanya mencatat dari Client ke Server kita
           const percentComplete = Math.round((event.loaded / event.total) * 100);
           setUploadProgress(percentComplete);
         }
@@ -117,10 +106,24 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
 
       xhr.onload = () => {
         if (xhr.status >= 200 && xhr.status < 300) {
-          setMediaUrl(guid); // Simpan GUID sebagai referensi di database kita
-          showToast({ message: "Video berhasil diunggah!", id: "upload-success", icon: "fa-check-circle" });
+          try {
+            const data = JSON.parse(xhr.responseText);
+            if (data.guid) {
+              setMediaUrl(data.guid);
+              showToast({ message: "Video berhasil diunggah!", id: "upload-success", icon: "fa-check-circle" });
+            } else {
+              showToast({ message: "Gagal mengunggah video.", id: "upload-fail", icon: "fa-times-circle" });
+            }
+          } catch (e) {
+            showToast({ message: "Respon server tidak valid.", id: "upload-fail-parse", icon: "fa-times-circle" });
+          }
         } else {
-          showToast({ message: "Gagal mengunggah video.", id: "upload-fail", icon: "fa-times-circle" });
+          try {
+            const err = JSON.parse(xhr.responseText);
+            showToast({ message: err.error || "Gagal mengunggah video.", id: "upload-fail", icon: "fa-times-circle" });
+          } catch {
+            showToast({ message: "Gagal mengunggah video.", id: "upload-fail", icon: "fa-times-circle" });
+          }
         }
         setIsUploadingVideo(false);
       };
@@ -130,7 +133,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
         setIsUploadingVideo(false);
       };
 
-      xhr.send(file);
+      xhr.send(formData);
 
     } catch (error: any) {
       console.error(error);
@@ -349,8 +352,10 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                             <input type="file" accept=".glb,.gltf" className="hidden" ref={file3dInputRef} onChange={(e) => {
                               const f = e.target.files?.[0];
                               if (f) {
-                                if (f.size > 50 * 1024 * 1024) {
-                                   showToast({ message: "Maksimal 50MB", id: "err-3d", icon: "fa-exclamation" });
+                                const max3DSize = userPlan === 'SUPREME' ? 100 * 1024 * 1024 : 50 * 1024 * 1024;
+                                const max3DLabel = userPlan === 'SUPREME' ? '100MB' : '50MB';
+                                if (f.size > max3DSize) {
+                                   showToast({ message: `Maksimal ${max3DLabel}`, id: "err-3d", icon: "fa-exclamation" });
                                    return;
                                 }
                                 setFile3d(f);
@@ -382,7 +387,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                     <i className="fas fa-cloud-upload-alt text-lg"></i>
                                   </div>
                                   <span className="text-sm font-bold text-slate-900 flex items-center gap-2">Pilih File 3D (.GLB/.GLTF)</span>
-                                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mt-1.5 uppercase tracking-widest">Maksimal 50MB</span>
+                                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mt-1.5 uppercase tracking-widest">Maksimal {userPlan === 'SUPREME' ? '100MB' : '50MB'}</span>
                                 </div>
                               )}
                             </div>
@@ -442,7 +447,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                                         <i className="fas fa-cloud-upload-alt text-lg"></i>
                                       </div>
                                       <span className="text-sm font-bold text-slate-900 flex items-center gap-2">Unggah Video Langsung <i className="fas fa-crown text-amber-500 text-xs"></i></span>
-                                      <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mt-1.5 uppercase tracking-widest">Maksimal 500MB (MP4, WEBM)</span>
+                                      <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mt-1.5 uppercase tracking-widest">Maksimal {userPlan === 'SUPREME' ? '100MB' : '50MB'} (MP4, WEBM)</span>
                                     </div>
                                   )}
                                 </div>
@@ -450,44 +455,77 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
                             )}
                           </div>
                         ) : (
-                          <CldUploadWidget
-                            uploadPreset={cloudinaryPreset}
-                            options={{ maxFiles: 1, resourceType: "image", sources: ["local", "url"] }}
-                            onSuccess={(result: any) => {
-                              if (typeof result.info === 'object' && 'secure_url' in result.info) {
-                                setMediaUrl(result.info.secure_url);
-                                showToast({ message: "Aset berhasil dilampirkan", id: "upload-asset-success", icon: "fa-image" });
-                              }
-                            }}
-                          >
-                            {({ open }) => (
-                              <motion.div
-                                whileHover={{ scale: 1.01 }}
-                                whileTap={{ scale: 0.99 }}
-                                onClick={() => open()}
-                                className="cursor-pointer border-2 border-dashed border-slate-200 hover:border-slate-900 hover:bg-slate-50 transition-all duration-300 rounded-[20px] flex flex-col items-center justify-center overflow-hidden relative group/upload min-h-[160px]"
-                              >
-                                {mediaUrl ? (
-                                  <div className="relative w-full h-48 bg-slate-100">
-                                    <LazyImage src={mediaUrl} alt="Preview" className="w-full h-full object-cover transition-transform duration-700 group-hover/upload:scale-105" />
-                                    <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/upload:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
-                                      <span className="bg-white/20 border border-white/40 text-white px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 shadow-xl">
-                                        <i className="fas fa-camera"></i> Ganti Gambar
-                                      </span>
-                                    </div>
+                          <div className="w-full">
+                            <input 
+                              type="file" 
+                              accept="image/png,image/jpeg,image/jpg,image/webp" 
+                              className="hidden" 
+                              ref={fileImageInputRef} 
+                              onChange={async (e) => {
+                                const f = e.target.files?.[0];
+                                if (!f) return;
+                                
+                                const maxImageSize = userPlan === 'SUPREME' ? 15 * 1024 * 1024 : userPlan === 'PRO' ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
+                                const maxImageLabel = userPlan === 'SUPREME' ? '15MB' : userPlan === 'PRO' ? '10MB' : '5MB';
+                                
+                                if (f.size > maxImageSize) {
+                                  showToast({ message: `Maksimal ukuran gambar ${maxImageLabel}`, id: "err-img", icon: "fa-exclamation" });
+                                  return;
+                                }
+
+                                setIsUploadingImage(true);
+                                const formData = new FormData();
+                                formData.append('file', f);
+
+                                try {
+                                  const res = await fetch('/api/projects/upload-image', {
+                                    method: 'POST',
+                                    body: formData
+                                  });
+                                  const data = await res.json();
+                                  
+                                  if (res.ok && data.secure_url) {
+                                    setMediaUrl(data.secure_url);
+                                    showToast({ message: "Aset berhasil dilampirkan", id: "upload-asset-success", icon: "fa-image" });
+                                  } else {
+                                    showToast({ message: data.error || "Gagal mengunggah gambar", id: "upload-asset-fail", icon: "fa-times" });
+                                  }
+                                } catch (err) {
+                                  showToast({ message: "Terjadi kesalahan jaringan", id: "upload-asset-err", icon: "fa-wifi" });
+                                } finally {
+                                  setIsUploadingImage(false);
+                                }
+                              }} 
+                            />
+                            <div
+                              onClick={() => !isUploadingImage && fileImageInputRef.current?.click()}
+                              className="cursor-pointer border-2 border-dashed border-slate-200 hover:border-slate-900 hover:bg-slate-50 transition-all duration-300 rounded-[20px] flex flex-col items-center justify-center overflow-hidden relative group/upload min-h-[160px]"
+                            >
+                              {isUploadingImage ? (
+                                <div className="py-8 flex flex-col items-center text-center px-4">
+                                  <i className="fas fa-circle-notch animate-spin text-3xl text-[#ff9e00] mb-3"></i>
+                                  <span className="text-sm font-bold text-slate-900">Mengunggah Gambar...</span>
+                                </div>
+                              ) : mediaUrl ? (
+                                <div className="relative w-full h-48 bg-slate-100">
+                                  <LazyImage src={mediaUrl} alt="Preview" className="w-full h-full object-cover transition-transform duration-700 group-hover/upload:scale-105" />
+                                  <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/upload:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
+                                    <span className="bg-white/20 border border-white/40 text-white px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 shadow-xl">
+                                      <i className="fas fa-camera"></i> Ganti Gambar
+                                    </span>
                                   </div>
-                                ) : (
-                                  <div className="py-8 flex flex-col items-center text-center px-4">
-                                    <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-3 group-hover/upload:bg-slate-900 group-hover/upload:text-white transition-all duration-300 group-hover/upload:shadow-md group-hover/upload:-translate-y-1">
-                                      <i className="fas fa-cloud-upload-alt text-lg"></i>
-                                    </div>
-                                    <span className="text-sm font-bold text-slate-900">Klik untuk Unggah Media</span>
-                                    <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mt-1.5 uppercase tracking-widest">Maksimal 5MB (JPG, PNG)</span>
+                                </div>
+                              ) : (
+                                <div className="py-8 flex flex-col items-center text-center px-4">
+                                  <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-3 group-hover/upload:bg-slate-900 group-hover/upload:text-white transition-all duration-300 group-hover/upload:shadow-md group-hover/upload:-translate-y-1">
+                                    <i className="fas fa-cloud-upload-alt text-lg"></i>
                                   </div>
-                                )}
-                              </motion.div>
-                            )}
-                          </CldUploadWidget>
+                                  <span className="text-sm font-bold text-slate-900">Klik untuk Unggah Media</span>
+                                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 mt-1.5 uppercase tracking-widest">Maksimal {userPlan === 'SUPREME' ? '15MB' : userPlan === 'PRO' ? '10MB' : '5MB'} (JPG, PNG)</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         )}
                       </div>
                       {/* INPUT DESKRIPSI */}
@@ -606,7 +644,7 @@ export function ProjectFormModal({ state, actions }: { state: any, actions: any 
               
               <h3 className="text-2xl font-black text-slate-900 mb-2 tracking-tight">Upgrade ke PRO</h3>
               <p className="text-sm font-medium text-slate-500 mb-8 leading-relaxed">
-                Nikmati fitur unggah video langsung ke server super cepat (bebas iklan YouTube), ukuran hingga 500MB, dan kustomisasi tanpa batas.
+                Nikmati fitur unggah video langsung ke server super cepat (bebas iklan YouTube), ukuran hingga 100MB, dan kustomisasi tanpa batas.
               </p>
               
               <button className="w-full py-4 rounded-full bg-slate-900 text-white font-bold text-sm shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">

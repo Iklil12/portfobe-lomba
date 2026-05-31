@@ -15,7 +15,16 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
 }
 
 @keyframes fadeIn {
@@ -167,26 +176,29 @@ body {
 }
 
 .animate-hero-nav {
-  opacity: 0;
-  animation: smoothReveal 1s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+  /* Animation removed */
 }
 
 .animate-hero-text {
-  opacity: 0;
-  animation: smoothReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+  /* Animation removed */
 }
 
 .animate-hero-visual {
-  opacity: 0;
-  animation: smoothReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards;
+  /* Animation removed */
 }
 
 * {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Ubuntu', sans-serif;
 }
 
-html {
+.nav-system-font,
+.nav-system-font *:not(i) {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+html, body {
   scroll-behavior: smooth;
+  max-width: 100%;
 }
 
 /* ============================================================== */

@@ -81,7 +81,7 @@ export default function GalleryModalView({ projects, subdomain }: GalleryModalVi
         </motion.div>
       </header>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-12 pb-32 z-10 relative">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-12 pb-32 z-10 relative" data-lenis-prevent="true">
         {projects.length === 0 ? (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}

@@ -193,7 +193,7 @@ export default function PublicPortfolioPage() {
         {data && liftCurtain && <PortfolioView data={data} theme={data.siteAppearance || data} />}
       </main>
 
-      {/* PORTFOBE WATERMARK REMOVED FOR LOMBA EDITION */}
+
     </>
   );
 }

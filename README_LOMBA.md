@@ -6,7 +6,6 @@ Versi ini adalah versi simplifikasi (MVP) dari Portfo.be yang dikhususkan untuk 
 - Semua fitur monetisasi (Billing, Pricing, dll) telah dihapus.
 - Seluruh user otomatis berstatus PRO.
 - Watermark "Built with Portfo.be" dihapus.
-- Hanya tersedia 10 Tema Premium.
 - Skema database di-simplifikasi.
 
 ## Setup Database Sementara

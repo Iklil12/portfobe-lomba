@@ -15,21 +15,39 @@ export const getVideoThumbnail = (urlOrId: string) => {
     return `https://vumbnail.com/${vimeoMatch[1]}.jpg`; 
   }
 
-  // Deteksi Bunny Stream (UUID format: 8-4-4-4-12)
-  const isBunny = urlOrId.length === 36 && urlOrId.includes('-');
-  if (isBunny) {
-    // Jika ada Pull Zone, gunakan Pull Zone. Jika tidak, gunakan dummy/placeholder
+  // Deteksi Bunny Stream (bisa berupa GUID murni 36 karakter, atau URL bertanda tangan lengkap)
+  let bunnyGuid = '';
+  if (urlOrId.length === 36 && urlOrId.includes('-')) {
+    bunnyGuid = urlOrId;
+  } else if (urlOrId.includes('mediadelivery.net') || urlOrId.includes('bunnycdn')) {
+    try {
+      const urlObj = new URL(urlOrId);
+      const paths = urlObj.pathname.split('/').filter(Boolean);
+      // Path format: /embed/{libraryId}/{videoId}
+      if (paths[0] === 'embed' && paths[2]) {
+        bunnyGuid = paths[2];
+      }
+    } catch (e) {
+      // Fallback regex untuk mencari UUID di dalam URL
+      const uuidMatch = urlOrId.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+      if (uuidMatch) {
+        bunnyGuid = uuidMatch[0];
+      }
+    }
+  }
+
+  if (bunnyGuid) {
     const pullZone = process.env.NEXT_PUBLIC_BUNNY_PULL_ZONE;
     if (pullZone) {
-      return `https://${pullZone}/${urlOrId}/thumbnail.jpg`;
+      return `https://${pullZone}/${bunnyGuid}/thumbnail.jpg`;
     }
     // Fallback image untuk video
     return 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop';
   }
 
   // Jika berupa file MP4 langsung
-  if (urlOrId.endsWith('.mp4')) {
-    return 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop';
+  if (urlOrId.endsWith('.mp4') || urlOrId.endsWith('.webm')) {
+    return urlOrId;
   }
 
   return urlOrId;

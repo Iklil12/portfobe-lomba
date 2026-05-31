@@ -12,6 +12,7 @@ import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { EditableText } from '@/components/ui/EditableText';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -109,7 +110,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
             <style dangerouslySetInnerHTML={{
                 __html: `
         .spatial-theme *:not(i):not(.fa):not(.fas):not(.far):not(.fab) { font-family: ${customBodyFont} !important; }
-        .spatial-theme h1, .spatial-theme h2, .spatial-theme h3 { font-family: ${customHeadingFont} !important; }
+        .spatial-theme h1, .spatial-theme h2, .spatial-theme h3, .spatial-theme h1 *:not(i):not(.fa), .spatial-theme h2 *:not(i):not(.fa), .spatial-theme h3 *:not(i):not(.fa) { font-family: ${customHeadingFont} !important; }
         /* Glassmorphism Mewah */
         .glass-panel {
           background: rgba(255, 255, 255, 0.02);
@@ -164,7 +165,9 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                 className={`${(isCardPreview || isEditor) ? "absolute" : "fixed"} top-0 left-0 w-full z-50 glass-nav flex justify-center py-4 px-6`}
             >
                 <div className="w-full max-w-6xl flex justify-between items-center">
-                    <span className="font-semibold tracking-tight text-white">{firstName} <span className="opacity-40">Portfolio</span></span>
+                    <span className="font-semibold tracking-tight text-white">
+                        <EditableText value={firstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} /> <EditableText value={theme?.customTexts?.spatial_nav_portfolio || 'Portfolio'} field="spatial_nav_portfolio" entity="appearance" isEditor={isEditor} as="span" className="opacity-40" maxLength={15} />
+                    </span>
                     <div className="flex items-center gap-6 text-sm font-medium text-slate-400">
                         <a href="#projects" className="hover:text-white transition-colors">Projects</a>
                         <a href="#awards" className="hover:text-white transition-colors hidden @md:block">Awards</a>
@@ -186,16 +189,18 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--hl)] opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--hl)]"></span>
                         </span>
-                        <span className="text-xs font-medium text-slate-300">Available for new opportunities</span>
+                        <span className="text-xs font-medium text-slate-300">
+                            <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={30} />
+                        </span>
                     </motion.div>
 
                     {/* Massive Elegant Typography */}
                     <motion.h1 variants={auraAnim} className={`font-semibold tracking-[-0.04em] text-gradient leading-[1.1] max-w-4xl mx-auto text-7xl @md:text-[6rem]`}>
-                        Building digital experiences that <span className="italic font-light text-white">inspire.</span>
+                        <EditableText value={theme?.customTexts?.spatial_hero_title1 || 'Building digital experiences that'} field="spatial_hero_title1" entity="appearance" isEditor={isEditor} as="span" maxLength={60} /> <EditableText value={theme?.customTexts?.spatial_hero_title2 || 'inspire.'} field="spatial_hero_title2" entity="appearance" isEditor={isEditor} as="span" className="italic font-light text-white" maxLength={20} />
                     </motion.h1>
 
                     <motion.p variants={auraAnim} className={`text-slate-400 font-normal leading-relaxed max-w-2xl mx-auto mt-8 text-xl`}>
-                        {bio}
+                        <EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" maxLength={250} />
                     </motion.p>
 
                     {/* Action Row & Avatar */}
@@ -207,8 +212,12 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                 <LazyImage src={displayAvatar} alt={fullName} className="w-full h-full object-cover" />
                             </div>
                             <div className="flex flex-col text-left">
-                                <span className="text-sm font-semibold text-white">{fullName}</span>
-                                <span className="text-[11px] text-slate-400">{location} • {currentTime}</span>
+                                <span className="text-sm font-semibold text-white">
+                                    <EditableText value={fullName} field="fullName" entity="profile" isEditor={isEditor} as="span" maxLength={30} />
+                                </span>
+                                <span className="text-[11px] text-slate-400">
+                                    <EditableText value={location} field="location" entity="profile" isEditor={isEditor} as="span" maxLength={20} /> {currentTime ? `• ${currentTime}` : ''}
+                                </span>
                             </div>
                         </div>
 
@@ -216,7 +225,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                         <div onClick={handleCopyEmail} className={`glass-panel p-4 px-6 ${radiusClass} flex items-center gap-3 cursor-pointer group hover:scale-105 transition-transform duration-500 relative overflow-hidden`}>
                             {isCopied && <motion.div initial={{ opacity: 1, scale: 0 }} animate={{ opacity: 0, scale: 2 }} className="absolute inset-0 bg-[var(--hl)] opacity-20"></motion.div>}
                             <span className={`text-sm font-medium transition-colors ${isCopied ? 'text-[var(--hl)]' : 'text-slate-300 group-hover:text-white'}`}>
-                                {isCopied ? 'Email Copied!' : 'Copy Email'}
+                                {isCopied ? 'Email Copied!' : <EditableText value={theme?.customTexts?.spatial_copy_email || 'Copy Email'} field="spatial_copy_email" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />}
                             </span>
                             <i className={`text-sm ${isCopied ? 'fas fa-check text-[var(--hl)]' : 'far fa-copy text-slate-500 group-hover:text-white transition-colors'}`}></i>
                         </div>
@@ -236,7 +245,9 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                 {/* PROJECTS SECTION (Asymmetrical Layout) */}
                 <div id="projects" className={`flex flex-col w-full px-8 gap-12`}>
                     <motion.div {...viewAnim} variants={auraAnim} className="flex justify-between items-end mb-4">
-                        <h2 className={`font-medium tracking-tight text-white text-4xl`}>Selected Works</h2>
+                        <h2 className={`font-medium tracking-tight text-white text-4xl`}>
+                            <EditableText value={theme?.customTexts?.stats_projects || 'Selected Works'} field="stats_projects" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                        </h2>
                         <span className="text-slate-500 font-medium">({archiveItems.length})</span>
                     </motion.div>
 
@@ -296,7 +307,9 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                     {/* Explore More Button */}
                     <motion.div {...viewAnim} variants={auraAnim} className="w-full flex justify-center mt-8">
                         <Link href={`/${subdomain}/gallery`} scroll={false} className={`${cardStyleClass} px-8 py-4 ${radiusClass} flex items-center gap-3 hover:scale-105 hover:bg-white/5 transition-all duration-500 group`}>
-                            <span className="font-medium text-white">Explore Full Archive</span>
+                            <span className="font-medium text-white">
+                                <EditableText value={theme?.customTexts?.explore_archive || 'Explore Full Archive'} field="explore_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                            </span>
                             <i className="fas fa-arrow-right text-sm text-slate-400 group-hover:translate-x-1 group-hover:text-white transition-all"></i>
                         </Link>
                     </motion.div>
@@ -306,7 +319,9 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                 {items3D.length > 0 && (
                     <div className={`flex flex-col w-full px-8 gap-12 mt-24 @md:mt-32`}>
                         <motion.div {...viewAnim} variants={auraAnim} className="flex justify-between items-end mb-4">
-                            <h2 className={`font-medium tracking-tight text-white text-4xl`}>Spatial Assets</h2>
+                            <h2 className={`font-medium tracking-tight text-white text-4xl`}>
+                                <EditableText value={theme?.customTexts?.models_title || 'Spatial Assets'} field="models_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                            </h2>
                             <span className="text-slate-500 font-medium">({items3D.length})</span>
                         </motion.div>
 
@@ -331,10 +346,14 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                     <div className="flex flex-col px-4">
                                         <div className="flex justify-between items-center mb-2">
                                             <div className="flex flex-col">
-                                                <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--hl)] font-bold mb-1 opacity-60">Spatial Model 0{i+1}</span>
+                                                <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--hl)] font-bold mb-1 opacity-60">
+                                                    <EditableText value={theme?.customTexts?.spatial_model_label || 'Spatial Model'} field="spatial_model_label" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /> 0{i+1}
+                                                </span>
                                                 <h3 className="text-3xl @md:text-5xl font-medium text-white group-hover:text-[var(--hl)] transition-colors">{p.title}</h3>
                                             </div>
-                                            <span className={`text-[10px] uppercase tracking-widest text-slate-500 border border-slate-800 px-4 py-2 ${radiusClass}`}>3D Asset</span>
+                                            <span className={`text-[10px] uppercase tracking-widest text-slate-500 border border-slate-800 px-4 py-2 ${radiusClass}`}>
+                                                <EditableText value={theme?.customTexts?.spatial_asset_label || '3D Asset'} field="spatial_asset_label" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
+                                            </span>
                                         </div>
                                         {p.description && <p className="text-slate-400 text-sm @md:text-base max-w-2xl mt-2 leading-relaxed">{p.description}</p>}
                                     </div>
@@ -361,7 +380,9 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                 {testimonials.length > 0 && (
                     <div className={`flex flex-col w-full mt-24 @md:mt-32 px-8`}>
                         <motion.div {...viewAnim} variants={auraAnim} className="mb-8">
-                            <h2 className={`font-medium tracking-tight text-white text-4xl`}>Client Voices</h2>
+                            <h2 className={`font-medium tracking-tight text-white text-4xl`}>
+                                <EditableText value={theme?.customTexts?.testimonials_title || 'Client Voices'} field="testimonials_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                            </h2>
                         </motion.div>
 
                         <div className="grid grid-cols-1 @md:grid-cols-2 gap-8">
@@ -405,7 +426,9 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                 {awardItems.length > 0 && (
                     <div id="awards" className={`flex flex-col w-full mt-24 @md:mt-32 px-8`}>
                         <motion.div {...viewAnim} variants={auraAnim} className="mb-8">
-                            <h2 className={`font-medium tracking-tight text-white text-4xl`}>Recognitions</h2>
+                            <h2 className={`font-medium tracking-tight text-white text-4xl`}>
+                                <EditableText value={theme?.customTexts?.awards_title || 'Recognitions'} field="awards_title" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
+                            </h2>
                         </motion.div>
 
                         <div className="flex flex-col border-t border-white/10">
@@ -443,18 +466,18 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full blur-[100px] opacity-20 pointer-events-none" style={{ backgroundColor: highlightColor }}></div>
 
                     <h2 className={`font-semibold tracking-tight text-white relative z-10 text-4xl @md:text-7xl`}>
-                        Let's build something <br className="hidden @md:block" />
-                        <span className="text-slate-400">extraordinary.</span>
+                        <EditableText value={theme?.customTexts?.spatial_footer_title1 || "Let's build something"} field="spatial_footer_title1" entity="appearance" isEditor={isEditor} as="span" maxLength={40} /> <br className="hidden @md:block" />
+                        <EditableText value={theme?.customTexts?.spatial_footer_title2 || 'extraordinary.'} field="spatial_footer_title2" entity="appearance" isEditor={isEditor} as="span" className="text-slate-400" maxLength={30} />
                     </h2>
 
                     <a href={`mailto:${userEmail}`} className={`mt-10 px-8 py-4 bg-white text-black ${radiusClass} font-semibold text-lg hover:scale-105 transition-transform duration-300 relative z-10 shadow-[0_0_30px_rgba(255,255,255,0.3)]`}>
-                        Get in touch
+                        <EditableText value={theme?.customTexts?.spatial_footer_cta || 'Get in touch'} field="spatial_footer_cta" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                     </a>
 
                     <div className="w-full mt-20 pt-8 border-t border-white/10 flex justify-between items-center relative z-10 flex-col @md:flex-row gap-6">
                         <div className="flex items-center gap-2 text-sm text-slate-400">
                             <div className="w-2 h-2 rounded-full bg-[var(--hl)]"></div>
-                            <span>© {new Date().getFullYear()} {fullName}. All rights reserved.</span>
+                            <span>© {new Date().getFullYear()} <EditableText value={fullName} field="fullName" entity="profile" isEditor={isEditor} as="span" maxLength={30} />. <EditableText value={theme?.customTexts?.footer_rights || 'All rights reserved.'} field="footer_rights" entity="appearance" isEditor={isEditor} as="span" maxLength={40} /></span>
                         </div>
                         <div className="flex gap-4">
                             {links.map((l: any, i: number) => (
@@ -490,7 +513,11 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                         <div className="flex items-center gap-2 mt-1">
                                             <div className="w-1.5 h-1.5 rounded-full bg-[var(--hl)]"></div>
                                             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 text-left">
-                                                {selectedMedia.type === 'video' ? 'Spatial Video Stream' : 'Visual Masterpiece'}
+                                                {selectedMedia.type === 'video' ? 
+                                                    <EditableText value={theme?.customTexts?.spatial_video_label || 'Spatial Video Stream'} field="spatial_video_label" entity="appearance" isEditor={isEditor} as="span" maxLength={30} /> 
+                                                    : 
+                                                    <EditableText value={theme?.customTexts?.spatial_photo_label || 'Visual Masterpiece'} field="spatial_photo_label" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                                                }
                                             </p>
                                         </div>
                                     </div>
@@ -518,7 +545,7 @@ export default function AuraTheme({ data, theme, isMobileView = false, isCardPre
                                         onClick={() => setSelectedMedia(null)}
                                         className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-500 hover:text-[var(--hl)] transition-colors"
                                     >
-                                        CLOSE ESCAPE
+                                        <EditableText value={theme?.customTexts?.spatial_close_btn || 'CLOSE ESCAPE'} field="spatial_close_btn" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                                     </button>
                                 </div>
                             </motion.div>

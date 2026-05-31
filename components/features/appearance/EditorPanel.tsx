@@ -42,8 +42,12 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
     setIsThemeModalOpen,
     setActiveTheme,
     setShowProModal,
-    toggleFavorite
+    toggleFavorite,
+    updateCustomText,
+    generateAiDesign
   } = actions;
+
+  const isAiLoading = state.isAiLoading;
 
   return (
     <>
@@ -51,6 +55,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
         isOpen={showProModal}
         onClose={() => setShowProModal(false)}
         feature={
+          state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' && userPlan === 'FREE' && !splashScreen && activeTheme !== 'cinematic' && activeTheme !== 'bentogrid' && activeTheme !== 'spatial' && activeTheme !== 'monolith' && activeTheme !== 'acid' && activeTheme !== 'split' && activeTheme !== 'editorial' && activeTheme !== 'obsidian-reel' ? "Fitur Smooth Scroll" :
           splashScreen ? "Fitur Cinematic Intro" :
             activeTheme === 'brutalism' ? "Tema Neo Brutalism" :
               activeTheme === 'cinematic' ? "Tema Cinematic Dark" :
@@ -59,7 +64,11 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                     activeTheme === 'monolith' ? "Tema Monolith Vanguard" :
                       activeTheme === 'acid' ? "Tema Acid Tech" : 
                         activeTheme === 'split' ? "Tema Nexus Split" : 
-                          activeTheme === 'editorial' ? "Tema Editorial Clean" : undefined
+                          activeTheme === 'editorial' ? "Tema Editorial Clean" : 
+                            activeTheme === 'obsidian-reel' ? "Tema Obsidian Reel" :
+                              activeTheme === 'layered-monolith' ? "Tema Layered Monolith" : 
+                                activeTheme === 'kinetic-avant-garde' ? "Tema Dynamic Void" : 
+                                  activeTheme === 'nexus-noir' ? "Tema Nexus Noir" : undefined
         }
       />
       <ThemeSelectionModal
@@ -142,7 +151,7 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-neutral-900 flex items-center justify-center text-white transition-transform group-hover:scale-105">
-                    <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : activeTheme === 'bentogrid' ? 'fa-th-large' : activeTheme === 'spatial' ? 'fa-star' : activeTheme === 'monolith' ? 'fa-cubes' : activeTheme === 'split' ? 'fa-columns' : activeTheme === 'editorial' ? 'fa-newspaper' : activeTheme === 'midnight-emulsion' ? 'fa-moon' : activeTheme === 'aura-kinetic' ? 'fa-water' : activeTheme === 'absolute-noir' ? 'fa-square' : 'fa-cube'} text-sm`}></i>
+                    <i className={`fas ${activeTheme === 'minimalist' ? 'fa-align-left' : activeTheme === 'cinematic' ? 'fa-film' : activeTheme === 'acid' ? 'fa-bolt' : activeTheme === 'bentogrid' ? 'fa-th-large' : activeTheme === 'spatial' ? 'fa-star' : activeTheme === 'monolith' || activeTheme === 'layered-monolith' ? 'fa-cubes' : activeTheme === 'kinetic-avant-garde' ? 'fa-bolt' : activeTheme === 'split' ? 'fa-columns' : activeTheme === 'editorial' ? 'fa-newspaper' : activeTheme === 'midnight-emulsion' ? 'fa-moon' : activeTheme === 'aura-kinetic' ? 'fa-water' : activeTheme === 'absolute-noir' ? 'fa-square' : activeTheme === 'obsidian-reel' ? 'fa-video' : 'fa-cube'} text-sm`}></i>
                   </div>
                   <div className="flex flex-col">
                     <span className="font-semibold text-neutral-900 text-sm tracking-tight">
@@ -157,7 +166,10 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                                       activeTheme === 'midnight-emulsion' ? 'Midnight Emulsion' :
                                         activeTheme === 'aura-kinetic' ? 'Aura Kinetic' :
                                           activeTheme === 'absolute-noir' ? 'Absolute Noir' :
-                                            'Neo Brutalism'}
+                                            activeTheme === 'obsidian-reel' ? 'Obsidian Reel' :
+                                              activeTheme === 'layered-monolith' ? 'Layered Monolith' :
+                                                activeTheme === 'kinetic-avant-garde' ? 'Dynamic Void' :
+                                                  'Neo Brutalism'}
                     </span>
                     <span className="text-[10px] text-neutral-400 font-medium mt-0.5">
                       Sedang Digunakan
@@ -166,6 +178,27 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* TOMBOL AI (REKOMENDASI DESAIN) */}
+          <div className="mb-12">
+             <button
+                onClick={generateAiDesign}
+                disabled={isAiLoading || isLoading}
+                className="w-full relative overflow-hidden group rounded-2xl p-[2px] disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl opacity-70 group-hover:opacity-100 animate-gradient-xy transition-opacity duration-500"></div>
+                <div className="relative bg-white rounded-2xl px-4 py-3 flex items-center justify-center gap-2 transition-all duration-300 group-hover:bg-opacity-90">
+                  {isAiLoading ? (
+                    <i className="fas fa-spinner animate-spin text-purple-600"></i>
+                  ) : (
+                    <i className="fas fa-magic text-purple-600"></i>
+                  )}
+                  <span className="font-bold text-xs uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
+                    {isAiLoading ? 'Menganalisis Profil...' : '✨ Rekomendasi Desain AI'}
+                  </span>
+                </div>
+              </button>
           </div>
 
           {/* DIVIDER */}
@@ -231,6 +264,35 @@ export function EditorPanel({ state, actions }: { state: any, actions: any }) {
               {/* Minimalist Switch */}
               <button className={`w-10 h-5 rounded-full relative transition-colors duration-300 shrink-0 outline-none ${splashScreen ? 'bg-neutral-900' : 'bg-neutral-200'}`}>
                 <div className={`w-4 h-4 rounded-full bg-white absolute top-[2px] transition-transform duration-300 shadow-sm ${splashScreen ? 'translate-x-[22px]' : 'translate-x-[2px]'}`}></div>
+              </button>
+            </div>
+          )}
+
+          {/* TOGGLE SMOOTH SCROLL (LENIS) */}
+          {isLoading ? (
+            <div className="border border-neutral-100 rounded-2xl p-5 h-20 animate-pulse mb-6"></div>
+          ) : (
+            <div 
+              className="cursor-pointer border border-neutral-200 rounded-2xl p-5 mb-6 transition-all duration-200 hover:border-neutral-300 hover:shadow-sm bg-white flex items-center justify-between"
+              onClick={() => updateCustomText('smooth_scroll', state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'false' : 'true')}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-400'}`}>
+                  <i className="fas fa-arrows-alt-v text-[12px]"></i>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold tracking-tight text-neutral-900 flex items-center gap-2">
+                    Smooth Scroll
+                    <span className="bg-neutral-100 border border-neutral-200 text-neutral-600 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest">
+                      PRO
+                    </span>
+                  </h3>
+                  <p className="text-[11px] text-neutral-500 mt-0.5">Efek gulir mulus seperti Webflow.</p>
+                </div>
+              </div>
+              
+              <button className={`w-10 h-5 rounded-full relative transition-colors duration-300 shrink-0 outline-none ${state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'bg-neutral-900' : 'bg-neutral-200'}`}>
+                <div className={`w-4 h-4 rounded-full bg-white absolute top-[2px] transition-transform duration-300 shadow-sm ${state.livePreviewTheme?.customTexts?.smooth_scroll === 'true' ? 'translate-x-[22px]' : 'translate-x-[2px]'}`}></div>
               </button>
             </div>
           )}

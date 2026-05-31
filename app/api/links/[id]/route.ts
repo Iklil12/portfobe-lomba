@@ -19,9 +19,11 @@ export async function PATCH(
 
     const { id } = await params; 
     const body = await req.json();
+    // SECURITY: Hanya terima field yang diizinkan (mencegah mass assignment)
+    const { platform, url, isActive } = body;
 
     // 1. Validasi URL jika ada perubahan URL
-    if (body.url && !body.url.startsWith("http://") && !body.url.startsWith("https://")) {
+    if (url && !url.startsWith("http://") && !url.startsWith("https://")) {
       return NextResponse.json({ error: "URL wajib diawali dengan http:// atau https://" }, { status: 400 });
     }
 
@@ -50,7 +52,11 @@ export async function PATCH(
 
     const updatedLink = await prisma.link.update({
       where: { id: id },
-      data: { ...body }
+      data: {
+        ...(platform !== undefined && { platform }),
+        ...(url !== undefined && { url }),
+        ...(isActive !== undefined && { isActive }),
+      }
     });
 
     // RECORD ACTIVITY

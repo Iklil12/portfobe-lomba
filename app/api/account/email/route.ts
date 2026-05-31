@@ -5,12 +5,17 @@ import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { Resend } from 'resend';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 // Mengambil API Key dari .env yang baru saja Anda buat
-const resend = new Resend(process.env.RESEND_API_KEY || "re_dummy_key_buat_build_doang");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function PATCH(req: Request) {
   try {
+    // Rate limit: maks 3 request per menit (mencegah flooding email verifikasi)
+    const rateLimitResponse = await checkRateLimit(3, 60000);
+    if (rateLimitResponse) return rateLimitResponse;
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

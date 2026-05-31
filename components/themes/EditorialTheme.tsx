@@ -11,6 +11,7 @@ import { GithubStats } from '@/components/themes/widgets/GithubStats';
 import { PenpotShowcase } from '@/components/themes/widgets/PenpotShowcase';
 import { CanvaShowcase } from '@/components/themes/widgets/CanvaShowcase';
 import { Interactive3DViewer } from '@/components/ui/Interactive3DViewer';
+import { EditableText } from '@/components/ui/EditableText';
 
 const isValidHexColor = (color: string) => /^#([0-9A-Fa-f]{3}){1,2}$/i.test(color);
 
@@ -120,15 +121,21 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
             <div className={`${(isCardPreview || isEditor) ? "absolute" : "fixed"} top-6 left-0 w-full z-50 flex justify-center pointer-events-none px-4`}>
                 <nav className="pointer-events-auto bg-white/80 backdrop-blur-md border border-subtle shadow-soft rounded-full px-4 py-2 @md:px-6 @md:py-3 flex items-center justify-between gap-4 @md:gap-16 w-full max-w-max">
                     <span className="font-sans font-bold tracking-tight text-sm">
-                        {firstName}
+                        <EditableText value={firstName} field="firstName" entity="profile" isEditor={isEditor} as="span" maxLength={15} />
                     </span>
                     <div className="hidden @md:flex items-center gap-6 font-sans text-xs font-medium text-slate-500">
-                        <a href="#work" className="hover:text-black transition-colors">Projects</a>
-                        <a href="#awards" className="hover:text-black transition-colors">Recognitions</a>
+                        <a href="#work" className="hover:text-black transition-colors">
+                            <EditableText value={theme?.customTexts?.editorial_nav_work || 'Projects'} field="editorial_nav_work" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
+                        </a>
+                        <a href="#awards" className="hover:text-black transition-colors">
+                            <EditableText value={theme?.customTexts?.editorial_nav_awards || 'Recognitions'} field="editorial_nav_awards" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
+                        </a>
                     </div>
                     <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full animate-pulse bg-[var(--hl)] shrink-0"></span>
-                        <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden @md:block">Available</span>
+                        <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden @md:block">
+                            <EditableText value={theme?.customTexts?.editorial_nav_available || 'Available'} field="editorial_nav_available" entity="appearance" isEditor={isEditor} as="span" maxLength={15} />
+                        </span>
                     </div>
                 </nav>
             </div>
@@ -142,23 +149,23 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                     <div className="flex flex-col w-full @md:w-3/5 order-2 @md:order-1">
                         <motion.span variants={fadeUp} className="font-sans text-xs font-bold uppercase tracking-widest text-slate-400 mb-6 flex items-center gap-4">
                             <span className="w-8 h-[1px] bg-slate-300"></span>
-                            Creative Portfolio
+                            <EditableText value={theme?.customTexts?.editorial_hero_top || 'Creative Portfolio'} field="editorial_hero_top" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                         </motion.span>
 
                         <motion.h1 variants={fadeUp} className={`font-sans font-semibold tracking-tight text-[#111] leading-[1.05] mb-8 text-5xl @md:text-6xl @lg:text-[6.5cqi]`}>
-                            Designing <span className="font-serif italic text-slate-500">clarity</span> out of complexity.
+                            <EditableText value={theme?.customTexts?.editorial_hero_t1 || 'Designing'} field="editorial_hero_t1" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /> <EditableText value={theme?.customTexts?.editorial_hero_t2 || 'clarity'} field="editorial_hero_t2" entity="appearance" isEditor={isEditor} as="span" className="font-serif italic text-slate-500" maxLength={20} /> <EditableText value={theme?.customTexts?.editorial_hero_t3 || 'out of complexity.'} field="editorial_hero_t3" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                         </motion.h1>
 
                         <motion.p variants={fadeUp} className={`font-sans text-slate-500 font-medium leading-relaxed max-w-xl text-base @md:text-lg @lg:text-xl`}>
-                            {bio}
+                            <EditableText value={bio} field="bio" entity="profile" isEditor={isEditor} as="span" maxLength={250} />
                         </motion.p>
 
                         <motion.div variants={fadeUp} className="flex items-center gap-4 mt-10">
                             <a href={`mailto:${userEmail}`} className={`px-6 py-3 @md:px-8 @md:py-4 ${radiusClass} bg-[#111] text-white font-sans text-sm @md:text-base font-medium hover:bg-[var(--hl)] transition-colors duration-300 shadow-xl shadow-black/10`}>
-                                Get in touch
+                                <EditableText value={theme?.customTexts?.editorial_hero_btn || 'Get in touch'} field="editorial_hero_btn" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
                             </a>
                             <button onClick={handleCopyEmail} className={`px-6 py-3 @md:px-8 @md:py-4 ${radiusClass} bg-white border border-subtle text-[#111] font-sans text-sm @md:text-base font-medium hover:bg-slate-50 transition-colors duration-300 flex items-center gap-2`}>
-                                {isCopied ? 'Email Copied' : 'Copy Email'} <i className={isCopied ? 'fas fa-check text-[var(--hl)]' : 'far fa-copy text-slate-400'}></i>
+                                {isCopied ? 'Email Copied' : <EditableText value={theme?.customTexts?.editorial_hero_copy || 'Copy Email'} field="editorial_hero_copy" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />} <i className={isCopied ? 'fas fa-check text-[var(--hl)]' : 'far fa-copy text-slate-400'}></i>
                             </button>
                         </motion.div>
                     </div>
@@ -177,7 +184,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
             <div className="w-full border-y border-subtle py-4 @md:py-6 bg-white overflow-hidden my-12 @md:my-20">
                 <div className="w-[200%] flex animate-marquee font-serif italic text-2xl @md:text-4xl text-slate-300 whitespace-nowrap">
                     <div className="flex items-center gap-8 @md:gap-16 px-4 @md:px-8">
-                        {[...Array(5)].map((_, i) => (<React.Fragment key={i}><span className="hover:text-[var(--hl)] transition-colors">{profession}</span><span className="text-slate-200">✦</span></React.Fragment>))}
+                        {[...Array(5)].map((_, i) => (<React.Fragment key={i}><span className="hover:text-[var(--hl)] transition-colors">{i === 0 ? <EditableText value={profession} field="profession" entity="profile" isEditor={isEditor} as="span" maxLength={30} /> : profession}</span><span className="text-slate-200">✦</span></React.Fragment>))}
                     </div>
                     <div className="flex items-center gap-8 @md:gap-16 px-4 @md:px-8">
                         {[...Array(5)].map((_, i) => (<React.Fragment key={i + 10}><span className="hover:text-[var(--hl)] transition-colors">{profession}</span><span className="text-slate-200">✦</span></React.Fragment>))}
@@ -190,10 +197,10 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
 
                 <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="flex flex-col @md:flex-row justify-between items-start @md:items-end mb-16 @md:mb-24 gap-6">
                     <h2 className={`font-sans font-semibold tracking-tight text-[#111] text-4xl @md:text-5xl @lg:text-6xl`}>
-                        Selected <span className="font-serif italic text-slate-400">Works</span>
+                        <EditableText value={theme?.customTexts?.editorial_works_t1 || 'Selected'} field="editorial_works_t1" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /> <EditableText value={theme?.customTexts?.editorial_works_t2 || 'Works'} field="editorial_works_t2" entity="appearance" isEditor={isEditor} as="span" className="font-serif italic text-slate-400" maxLength={20} />
                     </h2>
                     <p className="font-sans text-sm @md:text-base font-medium text-slate-500 max-w-xs">
-                        A curated collection of digital products, visual systems, and brand identities.
+                        <EditableText value={theme?.customTexts?.editorial_works_sub || 'A curated collection of digital products, visual systems, and brand identities.'} field="editorial_works_sub" entity="appearance" isEditor={isEditor} as="span" maxLength={100} />
                     </p>
                 </motion.div>
 
@@ -254,7 +261,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
 
                 <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true }} variants={fadeUp} className="w-full flex justify-center mt-20 @md:mt-32">
                     <Link href={`/${subdomain}/gallery`} scroll={false} className={`group inline-flex items-center justify-center gap-4 px-8 py-4 ${radiusClass} border border-subtle hover:border-[var(--hl)] hover:bg-[var(--hl)] hover:text-white transition-all duration-300 font-sans font-medium text-sm @md:text-base text-[#111]`}>
-                        View Full Archive
+                        <EditableText value={theme?.customTexts?.editorial_archive || 'View Full Archive'} field="editorial_archive" entity="appearance" isEditor={isEditor} as="span" maxLength={25} />
                         <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                     </Link>
                 </motion.div>
@@ -266,10 +273,10 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                 <section className={`w-full max-w-[1600px] mx-auto flex flex-col px-6 py-12 @md:px-12 @lg:px-20 @md:py-24 border-t border-subtle`}>
                     <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="flex flex-col @md:flex-row justify-between items-start @md:items-end mb-16 @md:mb-24 gap-6">
                         <h2 className={`font-sans font-semibold tracking-tight text-[#111] text-4xl @md:text-5xl @lg:text-6xl`}>
-                            Spatial <span className="font-serif italic text-slate-400">Models</span>
+                            <EditableText value={theme?.customTexts?.editorial_models_t1 || 'Spatial'} field="editorial_models_t1" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /> <EditableText value={theme?.customTexts?.editorial_models_t2 || 'Models'} field="editorial_models_t2" entity="appearance" isEditor={isEditor} as="span" className="font-serif italic text-slate-400" maxLength={20} />
                         </h2>
                         <p className="font-sans text-sm @md:text-base font-medium text-slate-500 max-w-xs">
-                            Interactive 3D environments and digital objects.
+                            <EditableText value={theme?.customTexts?.editorial_models_sub || 'Interactive 3D environments and digital objects.'} field="editorial_models_sub" entity="appearance" isEditor={isEditor} as="span" maxLength={100} />
                         </p>
                     </motion.div>
 
@@ -290,7 +297,9 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                                     <div className="flex flex-col px-2">
                                         <div className="flex justify-between items-start mb-3">
                                             <h3 className="font-sans text-2xl @md:text-3xl font-semibold text-[#111]">{p.title}</h3>
-                                            <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-slate-500 bg-slate-100 px-3 py-1 rounded-full">3D Asset</span>
+                                            <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                                                <EditableText value={theme?.customTexts?.editorial_model_tag || '3D Asset'} field="editorial_model_tag" entity="appearance" isEditor={isEditor} as="span" maxLength={20} />
+                                            </span>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -322,10 +331,10 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
 
                         <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="w-full @lg:w-1/3">
                             <h2 className={`font-sans font-semibold tracking-tight text-[#111] mb-4 text-4xl @md:text-5xl`}>
-                                Honors & <br /><span className="font-serif italic text-slate-400">Awards</span>
+                                <EditableText value={theme?.customTexts?.editorial_awards_t1 || 'Honors &'} field="editorial_awards_t1" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /> <br /><EditableText value={theme?.customTexts?.editorial_awards_t2 || 'Awards'} field="editorial_awards_t2" entity="appearance" isEditor={isEditor} as="span" className="font-serif italic text-slate-400" maxLength={20} />
                             </h2>
                             <p className="font-sans text-sm text-slate-500 leading-relaxed">
-                                Recognition from the industry for pushing the boundaries of digital product design and engineering.
+                                <EditableText value={theme?.customTexts?.editorial_awards_sub || 'Recognition from the industry for pushing the boundaries of digital product design and engineering.'} field="editorial_awards_sub" entity="appearance" isEditor={isEditor} as="span" maxLength={120} />
                             </p>
                         </motion.div>
 
@@ -364,7 +373,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                     <div className="max-w-[1600px] mx-auto">
                         <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="mb-16">
                             <h2 className={`font-sans font-semibold tracking-tight text-[#111] text-4xl @md:text-5xl`}>
-                                Client <span className="font-serif italic text-slate-400">Voices</span>
+                                <EditableText value={theme?.customTexts?.editorial_testi_t1 || 'Client'} field="editorial_testi_t1" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /> <EditableText value={theme?.customTexts?.editorial_testi_t2 || 'Voices'} field="editorial_testi_t2" entity="appearance" isEditor={isEditor} as="span" className="font-serif italic text-slate-400" maxLength={20} />
                             </h2>
                         </motion.div>
 
@@ -410,16 +419,18 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
             <footer className={`w-full bg-[#fdfdfc] flex flex-col items-center justify-center pt-32 pb-12 px-6 @md:px-12 @lg:px-20`}>
 
                 <motion.div initial="hidden" {...{ [animationTrigger]: "visible" }} viewport={{ once: true, amount: 0 }} variants={fadeUp} className="flex flex-col items-center text-center w-full max-w-4xl mx-auto mb-24 @md:mb-40">
-                    <span className="font-sans text-[10px] @md:text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-8">What's Next?</span>
+                    <span className="font-sans text-[10px] @md:text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-8">
+                        <EditableText value={theme?.customTexts?.editorial_footer_top || "What's Next?"} field="editorial_footer_top" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                    </span>
 
                     <div onClick={handleCopyEmail} className="cursor-pointer group relative w-full">
                         <h2 className={`font-sans font-bold tracking-tighter text-[#111] leading-[0.9] transition-colors duration-500 text-[15cqw] @md:text-[10cqw]`}>
-                            LET'S <span className="font-serif italic text-slate-300 group-hover:text-[var(--hl)] transition-colors">TALK</span>
+                            <EditableText value={theme?.customTexts?.editorial_footer_t1 || "LET'S"} field="editorial_footer_t1" entity="appearance" isEditor={isEditor} as="span" maxLength={20} /> <EditableText value={theme?.customTexts?.editorial_footer_t2 || 'TALK'} field="editorial_footer_t2" entity="appearance" isEditor={isEditor} as="span" className="font-serif italic text-slate-300 group-hover:text-[var(--hl)] transition-colors" maxLength={20} />
                         </h2>
 
                         {/* Hover Popup Message */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#111] text-white px-6 py-3 rounded-full font-sans text-sm font-medium opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all duration-300 pointer-events-none shadow-xl flex items-center gap-2">
-                            {isCopied ? 'Email Copied!' : 'Click to Copy Email'} <i className={isCopied ? 'fas fa-check text-green-400' : 'far fa-copy text-slate-400'}></i>
+                            {isCopied ? 'Email Copied!' : <EditableText value={theme?.customTexts?.editorial_footer_copy || 'Click to Copy Email'} field="editorial_footer_copy" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />} <i className={isCopied ? 'fas fa-check text-green-400' : 'far fa-copy text-slate-400'}></i>
                         </div>
                     </div>
                 </motion.div>
@@ -427,9 +438,9 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                 {/* Bottom Links */}
                 <div className="w-full max-w-[1600px] mx-auto flex flex-col @md:flex-row justify-between items-center gap-6 pt-8 border-t border-subtle font-sans text-xs font-medium text-slate-500">
                     <div className="flex items-center gap-2">
-                        <span>© {new Date().getFullYear()} {fullName}.</span>
+                        <span>© {new Date().getFullYear()} <EditableText value={fullName} field="fullName" entity="profile" isEditor={isEditor} as="span" maxLength={30} />.</span>
                         <span className="w-1 h-1 bg-slate-300 rounded-full mx-2"></span>
-                        <span>All rights reserved.</span>
+                        <span><EditableText value={theme?.customTexts?.footer_rights || 'All rights reserved.'} field="footer_rights" entity="appearance" isEditor={isEditor} as="span" maxLength={40} /></span>
                     </div>
 
                     <div className="flex items-center gap-6">
@@ -468,7 +479,9 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                             {/* Museum-style Header */}
                             <div className="flex justify-between items-center p-6 @md:p-10 border-b border-subtle relative z-10">
                                 <div className="flex flex-col">
-                                    <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400 mb-2">Editorial Exhibition</span>
+                                    <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400 mb-2">
+                                        <EditableText value={theme?.customTexts?.editorial_modal_top || 'Editorial Exhibition'} field="editorial_modal_top" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
+                                    </span>
                                     <h3 className="font-serif italic text-3xl @md:text-5xl text-[#111]">{selectedMedia.title}</h3>
                                 </div>
                                 <button 
@@ -499,7 +512,7 @@ export default function EditorialTheme({ data, theme, isMobileView = false, isCa
                                     onClick={() => setSelectedMedia(null)}
                                     className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-slate-400 hover:text-[var(--hl)] transition-colors"
                                 >
-                                    DISMISS EXHIBITION
+                                    <EditableText value={theme?.customTexts?.editorial_modal_close || 'DISMISS EXHIBITION'} field="editorial_modal_close" entity="appearance" isEditor={isEditor} as="span" maxLength={30} />
                                 </button>
                             </div>
                         </motion.div>
