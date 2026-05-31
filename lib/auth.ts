@@ -10,7 +10,7 @@ import { Resend } from 'resend';
 import GithubProvider from "next-auth/providers/github";
 
 // Inisialisasi Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY || "re_123456789_dummy_doang");
 
 declare module "next-auth" {
   interface Session {

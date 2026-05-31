@@ -8,7 +8,7 @@ import { Resend } from 'resend';
 import { checkRateLimit } from '@/lib/rate-limit';
 
 // Mengambil API Key dari .env yang baru saja Anda buat
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY || "re_123456789_dummy_doang");
 
 export async function PATCH(req: Request) {
   try {

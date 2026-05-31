@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import { Resend } from "resend";
 import { checkRateLimit } from "@/lib/rate-limit";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY || "re_123456789_dummy_doang");
 
 export async function POST(req: Request) {
   try {
