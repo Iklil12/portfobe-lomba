@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { registerUser } from "@/app/actions/auth";
 import { signIn } from 'next-auth/react';
-import ReCAPTCHA from "react-google-recaptcha";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -16,22 +15,13 @@ export default function RegisterPage() {
   
   // State baru khusus untuk loading tombol Google
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMsg("");
 
-    // Verifikasi CAPTCHA sebelum lanjut (Abaikan jika key belum di-set)
-    if (!captchaToken && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
-      setErrorMsg("Harap selesaikan verifikasi reCAPTCHA terlebih dahulu.");
-      return;
-    }
-
     setIsLoading(true);
-
     const formData = new FormData(e.currentTarget);
-    if (captchaToken) formData.append("captchaToken", captchaToken);
 
     const result = await registerUser(formData);
 
@@ -185,24 +175,10 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Google ReCAPTCHA v2 Widget */}
-            <div className="flex justify-center my-2">
-              {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? (
-                <ReCAPTCHA
-                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-                  onChange={(token) => setCaptchaToken(token)}
-                />
-              ) : (
-                <div className="text-[10px] text-red-500 font-bold p-3 bg-red-50 rounded-xl border border-red-200 text-center w-full">
-                  ⚠️ ReCAPTCHA Site Key belum diset di .env
-                </div>
-              )}
-            </div>
-
             <button 
               type="submit" 
-              disabled={isLoading || isGoogleLoading || (!captchaToken && !!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY)}
-              className={`w-full relative bg-slate-900 text-white py-4 rounded-2xl text-[13px] font-bold tracking-wide overflow-hidden transition-all duration-300 transform active:scale-[0.98] ${(isLoading || (!captchaToken && !!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY)) ? 'bg-slate-800 opacity-70 cursor-not-allowed' : 'hover:bg-[#ff9e00] hover:text-black hover:shadow-[0_15px_30px_rgba(255,158,0,0.3)] hover:-translate-y-0.5'}`}
+              disabled={isLoading || isGoogleLoading}
+              className={`w-full relative bg-slate-900 text-white py-4 rounded-2xl text-[13px] font-bold tracking-wide overflow-hidden transition-all duration-300 transform active:scale-[0.98] ${isLoading ? 'bg-slate-800 opacity-70 cursor-not-allowed' : 'hover:bg-[#ff9e00] hover:text-black hover:shadow-[0_15px_30px_rgba(255,158,0,0.3)] hover:-translate-y-0.5'}`}
             >
               <div className={`flex items-center justify-center gap-2 transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
                 Buat Akun Sekarang

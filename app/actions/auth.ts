@@ -42,30 +42,6 @@ export async function registerUser(formData: FormData) {
     }
     // ----------------------------------
 
-    // --- 0.5 VERIFIKASI CAPTCHA KE GOOGLE ---
-    const captchaToken = formData.get("captchaToken") as string;
-
-    // Hanya lakukan validasi jika admin sudah menyetel Secret Key
-    if (process.env.RECAPTCHA_SECRET_KEY) {
-      if (!captchaToken) {
-        return { error: "Harap selesaikan verifikasi reCAPTCHA terlebih dahulu." };
-      }
-
-      const verifyRes = await fetch("https://www.google.com/recaptcha/api/siteverify", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captchaToken}`,
-      });
-
-      const verifyData = await verifyRes.json();
-
-      if (!verifyData.success) {
-        console.error("CAPTCHA Validation Failed:", verifyData);
-        return { error: "Validasi CAPTCHA gagal. Sistem mendeteksi aktivitas mencurigakan." };
-      }
-    }
-    // -----------------------------------------
-
     // 1. Cek apakah user sudah ada
     const existingUser = await prisma.user.findUnique({
       where: { email: email }
